@@ -7,7 +7,7 @@ It has no dependencies, so it should be as painless as possible.
 Instead of using the Sijax library directly, you may want to install a wrapper for it
 in the form of an extension for the framework you're using (if such an extension is available).
 A Sijax extension for the `Flask microframework <http://flask.pocoo.org>`_ is planned to be developed soon.
-An extensions for other frameworks may appear with time.
+Extensions for other frameworks may appear with time.
 
 If you can find such an extension for your framework of choice, you should take a look at the setup docs for it instead.
 
