@@ -1,3 +1,14 @@
+"""
+Sijax
+=====
+
+Sijax stands for "Simple ajax" and provides just that.
+It's a simple Python/jQuery library providing easy ajax integration for python web apps.
+
+The main idea is to use javascript code that calls server-side callbacks, which generate a response (manipulating the DOM, etc) and pass it back to the client.
+This way, you don't need to manually dispatch ajax requests to certain URIs and go over each XML/JSON response manually.
+"""
+
 from setuptools import setup, find_packages
 
 
@@ -14,6 +25,7 @@ setup(
     include_package_data = True,
     version = "0.1.0",
     description = "An easy to use AJAX library based on jQuery.ajax",
+    long_description = __doc__,
     author = "Slavi Pantaleev",
     author_email = "s.pantaleev@gmail.com",
     url = "https://github.com/spantaleev/sijax-python",
