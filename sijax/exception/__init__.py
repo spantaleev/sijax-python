@@ -1,0 +1,2 @@
+class SijaxError(Exception): pass
+
