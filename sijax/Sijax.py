@@ -29,7 +29,7 @@ class Sijax(object):
     PARAM_RESPONSE_CLASS = 'response_class'
 
     #: An option when registering callbacks that makes certain extra arguments
-    #: be passed implicitly to the response function after the obj_response argument
+    #: be passed automatically to the response function after the obj_response argument
     #: and before the other arguments
     PARAM_ARGS_EXTRA = 'args_extra'
     
@@ -96,7 +96,7 @@ class Sijax(object):
 
         The optional response class parameter could be used to substitute the regular
         :class:`response.BaseResponse` class used by default. An instance of response_class
-        is passed implicitly as a first parameter to your response function.
+        is passed automatically as a first parameter to your response function.
 
         The optional args_extra parameter allows you (or rather the framework that
         you're using) to pass a list of extra arguments to your response function, immediately
