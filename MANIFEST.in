@@ -3,3 +3,5 @@ recursive-include docs *
 recursive-include sijax/js *
 recursive-include sijax/plugin/comet/js *
 recursive-include sijax/plugin/upload/js *
+
+recursive-exclude * *.swp
