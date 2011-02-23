@@ -7,6 +7,20 @@ It's a simple Python/jQuery library providing easy ajax integration for python w
 
 The main idea is to use javascript code that calls server-side callbacks, which generate a response (manipulating the DOM, etc) and pass it back to the client.
 This way, you don't need to manually dispatch ajax requests to certain URIs and go over each XML/JSON response manually.
+
+Here's a tiny snippet of code to show what it's capable of doing::
+
+    # Function definition in Python
+    def say_hello_handler(obj_response, hello_from, hello_to):
+        obj_response.alert("Hello from %s to %s" % (hello_from, hello_to))
+        obj_response.alert("Redirecting you..")
+        obj_response.redirect("https://github.com/spantaleev/sijax-python")
+
+    # Expose the above function publicly by the name of "say_hello"
+    sijax_instance.register_callback("say_hello", say_hello_handler)
+
+    //The above function can be called from javascript using
+    Sijax.request('say_hello', ['John', 'Greg']);
 """
 
 from setuptools import setup, find_packages
@@ -23,7 +37,7 @@ setup(
     name = "Sijax",
     packages = find_packages(),
     include_package_data = True,
-    version = "0.1.1",
+    version = "0.1.2",
     description = "An easy to use AJAX library based on jQuery.ajax",
     long_description = __doc__,
     author = "Slavi Pantaleev",
