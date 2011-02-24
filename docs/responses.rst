@@ -47,3 +47,20 @@ It would then show an alert message to the user.
 ``Sijax.request()`` also accepts a third optional (and more advanced) argument,
 which can specify some custom options to pass to ``jQuery.ajax``.
 You may want to use it to setup call retries, timeouts, etc.
+
+
+Response methods
+----------------
+
+- ``alert(message)`` - shows the alert message
+- ``html(selector, html)`` - sets the given ``html`` to all elements matching the jQuery selector ``selector``
+- ``html_append(selector, html)`` - same as ``html()``, but appends html instead of setting the new html
+- ``html_prepend(selector, html)`` - same as ``html()``, but prepends html instead of setting the new html
+- ``attr(selector, property, value)`` - changes the ``property`` to ``value`` for all elements matching the jQuery selector ``selector``
+- ``attr_append(selector, property, value)`` - same as ``attr()``, but appends to the property value, instead of setting a new value
+- ``attr_prepend(selector, property, value)`` - same as ``attr()``, but prepends to the property value, instead of setting a new value
+- ``css(selector, property, value)`` - changes the style ``property`` to ``value`` for all elements matching the jQuery selector ``selector``
+- ``script(javascript)`` - executes the given ``javascript`` code
+- ``remove(selector)`` - removes all DOM elements matching the selector
+- ``redirect(url)`` - redirects the browser to the given ``url``
+- ``call(function, args_list)`` - calls a javascript function named ``function``, passing the given arguments to it

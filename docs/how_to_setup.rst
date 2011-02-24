@@ -112,3 +112,21 @@ This tells Sijax to load the ``json2.js`` file from the given URI, if it finds a
 If a browser that supports JSON natively is found, nothing new is loaded.
 
 The ``json2.js`` file is distributed with this project too and can be found in the ``sijax/js`` directory.
+
+
+Note on the response result
+---------------------------
+
+``sijax_instance.process_request()`` is what calls your registered callback, passing the proper instance of the response class
+to it as its first argument. Your handler function calls methods on that response object (like ``html()``, ``css()``, etc)
+which queue commands. When your handler function exits those queued commands are represented as JSON and returned as a string.
+This means that ``sijax_instance.process_request()`` returns *a string* (valid JSON) for normal handler functions that use the
+`response.BaseResponse` class (default).
+
+If the Comet or Upload plugin is used, it does something else though.
+Comet is implemented using an iframe. We're not using XHR requests there. The purpose of the Comet plugin is to allow you
+to push some commands, do some more work, flush some more commands, as many times as you want until you finally exit the handler function.
+
+This means that it can't return a single string once. It needs to push (flush) the data several times, whenever you want it to.
+That's why such handler functions return a generator object instead. You can flush the data to the browser on each iteration.
+Each iteration's data is i *a string*, but it's *not JSON* - it's html markup (including javascript calls).
