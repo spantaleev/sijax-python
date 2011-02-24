@@ -42,6 +42,14 @@ All you need to to register a Comet function is to use the registration helper f
     # registers comet_handler by the name of "func_name"
     register_comet_callback(sijax_instance, "func_name", comet_handler)
 
+There's a tiny difference in the way Comet functions are called, compared to regular Sijax functions::
+
+    //Regular function call
+    Sijax.request('func_name')
+
+    //Comet function call
+    sjxComet.request('func_name')
+
 There's also a mass registration helper function::
 
     from sijax.plugin.comet import register_comet_object
