@@ -70,6 +70,15 @@ Here's an example on how to use some of them::
         obj_response.redirect('http://github.com/')
 
 
+How do I install it?
+--------------------
+
+A package named **Sijax** is available on `PyPi <http://pypi.python.org/pypi/Sijax>`_.
+You can easily install that from the command line with::
+
+    easy_install sijax
+
+
 How light is it?
 ----------------
 
@@ -111,7 +120,7 @@ Known issues
 Do you support comet?
 ---------------------
 
-Yes, comet streaming is supported via the comet plugin. You can look at ``examples/comet.py`` for more details.
+Yes, comet streaming is supported via the comet plugin. You can look at ``docs/comet.rst`` for more details.
 
 We only provide a very simple implementation (using a hidden iframe), because it works in all browsers and that's probably all that's needed for simple streaming usage.
 
@@ -126,5 +135,5 @@ What other plugins are available?
 - Comet plugin - allows you to send some commands to the browser and continue running your php response function, before sending some more, etc.
 - Upload plugin - allows you to convert any simple upload form to an ajax-enabled one
 
-There are demos in the ``examples`` directory for all plugins.
+There's more documentation in the ``docs`` directory.
 
