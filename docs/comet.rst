@@ -30,7 +30,7 @@ If your Comet function doesn't ``yield`` at all, it's response will be returned 
 much like a normal request function (that uses `response.BaseResponse`).
 
 Let's see how we can register a handler function as a Comet function. If you don't do something special over
-regular function registartions, you'll end up with a regular function, which can't use yield!
+regular function registrations, you'll end up with a regular function, which can't use yield!
 
 All you need to to register a Comet function is to use the registration helper function that Comet provides::
 

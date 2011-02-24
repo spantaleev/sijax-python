@@ -9,7 +9,7 @@ This way, you don't need to manually dispatch ajax requests to certain URIs and 
 
 Sijax was initially developed for PHP, inspired by the `Xajax <http://xajax-project.org/>`_ library (PHP-only).
 
-There are sample files in ``Sijax/examples`` that demonstrate how it can be used.
+There's some more documentation (with included examples) in the ``docs`` directory.
 
 
 How does it work?
@@ -77,6 +77,9 @@ A package named **Sijax** is available on `PyPi <http://pypi.python.org/pypi/Sij
 You can easily install that from the command line with::
 
     easy_install sijax
+
+You may want to take a look at ``docs/how_to_setup.rst`` for instructions on how to set it up,
+after you got it installed.
 
 
 How light is it?
