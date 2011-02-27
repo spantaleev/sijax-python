@@ -37,7 +37,7 @@ setup(
     name = "Sijax",
     packages = find_packages(),
     include_package_data = True,
-    version = "0.1.2",
+    version = "0.1.3",
     description = "An easy to use AJAX library based on jQuery.ajax",
     long_description = __doc__,
     author = "Slavi Pantaleev",
