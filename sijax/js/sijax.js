@@ -76,7 +76,7 @@ Sijax.process_call = function (params) {
 	var callbackString = params.call,
 		callback = eval(callbackString);
 	
-	callback(params.params);
+	callback.apply(null, params.params);
 };
 
 Sijax.request = function (functionName, callArgs, requestParams) {
