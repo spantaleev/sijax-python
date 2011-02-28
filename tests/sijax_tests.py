@@ -435,7 +435,7 @@ class SijaxMainTestCase(unittest.TestCase):
         # Yielding is only supported by streaming functions.
         # It makes no sense for regular functions to use it.
         # If a regular function tries to yield, we expect
-        # a RuntimeError to be raised
+        # a SijaxError to be raised
 
         inst = Sijax()
         def callback(obj_response):
@@ -444,8 +444,38 @@ class SijaxMainTestCase(unittest.TestCase):
         try:
             inst.execute_callback([], callback)
             self.fail("Yielding regular function didn't raise expected exception!")
-        except RuntimeError:
+        except SijaxError:
             pass
+
+    def test_response_method_call_rejects_bad_args(self):
+        # obj_response.call receives a function name to call
+        # and an optional list of arguments to pass to it.
+        # If the arguments parameter is specified, it must be
+        # a list or a tuple.
+
+        inst = Sijax()
+
+        def try_call(args_value, should_succeed):
+            def callback(obj_response):
+                obj_response.call('function', args_value)
+
+            success = False
+            try:
+                inst.execute_callback([], callback)
+                success = True
+            except SijaxError as ex:
+                pass
+
+            self.assertEqual(should_succeed, success, "Failure for %s" % repr(args_value))
+
+        try_call(None, True)
+        try_call([], True)
+        try_call(['arg1', 'arg2', 3, 4, 'arg5'], True)
+        try_call((), True)
+
+        try_call('arg1', False)
+        try_call(1, False)
+        try_call({'dictionary': 'here'}, False)
 
 
 class SijaxStreamingTestCase(unittest.TestCase):

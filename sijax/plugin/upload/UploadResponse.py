@@ -46,4 +46,4 @@ class UploadResponse(StreamingIframeResponse):
         return self._form_id
 
     def reset_form(self):
-        return self.call("sjxUpload.resetForm", self.form_id)
+        return self.call("sjxUpload.resetForm", [self.form_id])

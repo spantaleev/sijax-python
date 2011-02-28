@@ -16,6 +16,7 @@
 
 
 from ..helper import json
+from ..exception import SijaxError
 from types import GeneratorType
 
 
@@ -187,6 +188,10 @@ class BaseResponse(object):
         """
         if func_params is None:
             func_params = []
+
+        if not isinstance(func_params, list) and not isinstance(func_params, tuple):
+            raise SijaxError("call() expects a list, a tuple or None for the args list")
+
         params = {self.__class__.COMMAND_CALL: js_func_name, "params": func_params}
         return self.add_command(self.__class__.COMMAND_CALL, params)
     
@@ -220,7 +225,7 @@ class BaseResponse(object):
             # it means that our regular function was used as a streaming function -
             # a mistake which could happen due to incorrect function registration
             if isinstance(result, GeneratorType):
-                raise RuntimeError('Flushing/Yielding/Streaming is not supported for regular functions!')
+                raise SijaxError('Flushing/Yielding/Streaming is not supported for regular functions!')
 
     def _process_call_chain(self, call_chain):
         """Executes all the callbacks in the chain for this response object.
