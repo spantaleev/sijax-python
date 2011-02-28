@@ -1,5 +1,21 @@
+# -*- coding: utf-8 -*-
+
+"""
+    sijax.response.StreamingIframeResponse
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Provides a response class to be used when Sijax functions
+    are invoked via an iframe, instead of XHR.
+    The main difference from the BaseResponse class is that this one
+    can do streaming, meaning it can flush the commands queue back to
+    the browser at any time.
+
+    :copyright: (c) 2011 by Slavi Pantaleev.
+    :license: BSD, see LICENSE.txt for more details.
+"""
+
+
 from .BaseResponse import BaseResponse
-from types import GeneratorType
 
 
 class StreamingIframeResponse(BaseResponse):

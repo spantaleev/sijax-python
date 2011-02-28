@@ -1,3 +1,16 @@
+# -*- coding: utf-8 -*-
+
+"""
+    sijax.plugin.upload
+    ~~~~~~~~~~~~~~~~~~~
+
+    Provides helpers to register Upload functions.
+
+    :copyright: (c) 2011 by Slavi Pantaleev.
+    :license: BSD, see LICENSE.txt for more details.
+"""
+
+
 from ...helper import json
 from ...exception import SijaxError
 from .UploadResponse import UploadResponse

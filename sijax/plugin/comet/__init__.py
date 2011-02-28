@@ -1,3 +1,16 @@
+# -*- coding: utf-8 -*-
+
+"""
+    sijax.plugin.comet
+    ~~~~~~~~~~~~~~~~~~
+
+    Provides helpers to register Comet functions.
+
+    :copyright: (c) 2011 by Slavi Pantaleev.
+    :license: BSD, see LICENSE.txt for more details.
+"""
+
+
 from .CometResponse import CometResponse
 
 

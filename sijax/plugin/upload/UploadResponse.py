@@ -1,3 +1,17 @@
+# -*- coding: utf-8 -*-
+
+"""
+    sijax.plugin.upload.UploadResponse
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Provides the UploadResponse class, an instance of which
+    is passed as the first argument to all Upload functions.
+
+    :copyright: (c) 2011 by Slavi Pantaleev.
+    :license: BSD, see LICENSE.txt for more details.
+"""
+
+
 from ...response.StreamingIframeResponse import StreamingIframeResponse
 
 

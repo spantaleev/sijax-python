@@ -1,3 +1,17 @@
+# -*- coding: utf-8 -*
+
+"""
+    sijax.Sijax
+    ~~~~~~~~~~~
+
+    Implements the main Sijax class, an instance of which is used to
+    register callbacks, invoke callbacks, setup events handlers, etc.
+
+    :copyright: (c) 2011 by Slavi Pantaleev.
+    :license: BSD, see LICENSE.txt for more details.
+"""
+
+
 from .helper import json
 
 from .response.BaseResponse import BaseResponse

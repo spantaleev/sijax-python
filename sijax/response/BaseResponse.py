@@ -1,3 +1,20 @@
+# -*- coding: utf-8 -*-
+
+"""
+    sijax.response.BaseResponse
+    ~~~~~~~~~~~~
+
+    Provides the BaseResponse class, which is the default class
+    used to create response objects from for regular Sijax functions.
+    The response class is the way for Sijax functions (handlers) to
+    pass information back to the browser. They do this by calling
+    various methods, which queue commands until they're sent to the browser.
+
+    :copyright: (c) 2011 by Slavi Pantaleev.
+    :license: BSD, see LICENSE.txt for more details.
+"""
+
+
 from ..helper import json
 
 

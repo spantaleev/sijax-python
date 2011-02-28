@@ -1,3 +1,16 @@
+# -*- coding: utf-8 -*-
+
+"""
+    sijax.helper
+    ~~~~~~~~~~~~
+
+    Provides various helper functions and objects that other modules use.
+
+    :copyright: (c) 2011 by Slavi Pantaleev.
+    :license: BSD, see LICENSE.txt for more details.
+"""
+
+
 from ..exception import SijaxError
 
 
