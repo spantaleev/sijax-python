@@ -17,7 +17,6 @@ from .helper import json
 from .response.BaseResponse import BaseResponse
 from .exception import SijaxError
 
-
 class Sijax(object):
     
     PARAM_REQUEST = 'sijax_rq'
