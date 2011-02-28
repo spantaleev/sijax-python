@@ -25,6 +25,8 @@ Here's a tiny snippet of code to show what it's capable of doing::
 
 from setuptools import setup, find_packages
 
+import sijax
+
 
 def run_tests():
     import os, sys
@@ -37,7 +39,7 @@ setup(
     name = "Sijax",
     packages = find_packages(),
     include_package_data = True,
-    version = "0.1.3",
+    version = sijax.__version__,
     description = "An easy to use AJAX library based on jQuery.ajax",
     long_description = __doc__,
     author = "Slavi Pantaleev",

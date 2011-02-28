@@ -2,7 +2,7 @@
 
 """
     sijax.response.BaseResponse
-    ~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Provides the BaseResponse class, which is the default class
     used to create response objects from for regular Sijax functions.
