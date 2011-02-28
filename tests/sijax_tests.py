@@ -431,6 +431,22 @@ class SijaxMainTestCase(unittest.TestCase):
         try_args(False, False)
         try_args({"dictionary": "here"}, False)
 
+    def test_regula_functions_that_yield_are_not_allowed(self):
+        # Yielding is only supported by streaming functions.
+        # It makes no sense for regular functions to use it.
+        # If a regular function tries to yield, we expect
+        # a RuntimeError to be raised
+
+        inst = Sijax()
+        def callback(obj_response):
+            yield obj_response
+
+        try:
+            inst.execute_callback([], callback)
+            self.fail("Yielding regular function didn't raise expected exception!")
+        except RuntimeError:
+            pass
+
 
 class SijaxStreamingTestCase(unittest.TestCase):
     """This tests the StreamingIframeResponse functionality, which is

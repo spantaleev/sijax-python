@@ -16,6 +16,7 @@
 
 
 from ..helper import json
+from types import GeneratorType
 
 
 class BaseResponse(object):
@@ -206,13 +207,20 @@ class BaseResponse(object):
         For other responses (like Comet) though we can flush implicitly after
         every callback.
         """
+
         try:
-            callback(self, *args)
+            result = callback(self, *args)
         except TypeError:
             # we should re-raise the exception if it's coming
             # from within the function, meaning calling works.. @todo
             event_invalid_call = self._sijax.__class__.EVENT_INVALID_CALL
             self._sijax.get_event(event_invalid_call)(self, callback)
+        else:
+            # We usually don't expect a return value, but if we get a generator
+            # it means that our regular function was used as a streaming function -
+            # a mistake which could happen due to incorrect function registration
+            if isinstance(result, GeneratorType):
+                raise RuntimeError('Flushing/Yielding/Streaming is not supported for regular functions!')
 
     def _process_call_chain(self, call_chain):
         """Executes all the callbacks in the chain for this response object.
