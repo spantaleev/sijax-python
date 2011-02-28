@@ -16,6 +16,7 @@
 
 
 from .BaseResponse import BaseResponse
+from types import GeneratorType
 
 
 class StreamingIframeResponse(BaseResponse):
