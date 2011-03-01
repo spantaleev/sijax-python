@@ -1,6 +1,9 @@
 import sys
 import os
 import unittest
+import tempfile
+import shutil
+from contextlib import contextmanager
 
 
 sijax_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -16,6 +19,16 @@ from sijax.plugin.comet import register_comet_callback, register_comet_object
 
 from sijax.plugin.upload.UploadResponse import UploadResponse
 from sijax.plugin.upload import register_upload_callback
+
+from sijax.helper import init_static_path
+
+@contextmanager
+def temporary_dir(*args, **kwargs):
+    path = tempfile.mkdtemp()
+    try:
+        yield path
+    finally:
+        shutil.rmtree(path)
 
 
 class SijaxMainTestCase(unittest.TestCase):
@@ -476,6 +489,87 @@ class SijaxMainTestCase(unittest.TestCase):
         try_call('arg1', False)
         try_call(1, False)
         try_call({'dictionary': 'here'}, False)
+
+    def test_init_static_path_helper_works(self):
+        import os
+        import sijax
+
+        with temporary_dir() as static_path:
+            init_static_path(static_path)
+
+            version_file = os.path.join(static_path, 'sijax_version')
+            if not os.path.exists(version_file):
+                self.fail('Version file %s does not exist' % version_file)
+            self.assertEqual(open(version_file).read(), sijax.__version__)
+
+            core_js_file = os.path.join(static_path, 'sijax.js')
+
+            # let's ensure that files are only written (or deleted)
+            # if the version changes
+            fp = open(core_js_file, 'w')
+            fp.write('new stuff')
+            fp.close()
+            init_static_path(static_path)
+            # version file is the same, so it shouldn't touch it
+            self.assertEqual(open(core_js_file).read(), 'new stuff')
+
+
+            fp = open(version_file, 'w')
+            fp.write('another_version_string')
+            fp.close()
+
+            # let's also create another file (as it's from the old version)
+            # and make sure that init will delete it
+            new_file = os.path.join(static_path, 'extra-file.js')
+            self.assertFalse(os.path.exists(new_file))
+            fp = open(new_file, 'w')
+            fp.write('blah')
+            fp.close()
+            self.assertTrue(os.path.exists(new_file))
+
+            # the version string is different, so we expect a complete resync
+            # - extra files should be deleted, other files should be updated
+            init_static_path(static_path)
+            self.assertNotEqual(open(core_js_file).read(), 'new stuff')
+            self.assertEqual(open(version_file).read(), sijax.__version__)
+            self.assertFalse(os.path.exists(new_file))
+
+    def test_static_path_helper_refuses_to_write_to_non_empty_paths(self):
+        # The static path helper should only write to paths that are empty
+        # or that include a version file.
+        # Only such paths are considered safe to write to.
+        import os
+
+        def try_init(path, should_succeed):
+            success = False
+            try:
+                init_static_path(path)
+                success = True
+            except SijaxError:
+                pass
+
+            self.assertEqual(should_succeed, success)
+
+        # New empty temporary dir should work
+        with temporary_dir() as static_path:
+            try_init(static_path, True)
+
+        # A directory with some files (but not version file) should fail
+        with temporary_dir() as static_path:
+            fp = open(os.path.join(static_path, 'some.file'), 'w')
+            fp.write('blah')
+            fp.close()
+            try_init(static_path, False)
+
+        # A directory with some files, but also a version file
+        with temporary_dir() as static_path:
+            fp = open(os.path.join(static_path, 'some.file'), 'w')
+            fp.write('blah')
+            fp.close()
+            fp = open(os.path.join(static_path, 'sijax_version'), 'w')
+            fp.write('version_string')
+            fp.close()
+            try_init(static_path, True)
 
 
 class SijaxStreamingTestCase(unittest.TestCase):
