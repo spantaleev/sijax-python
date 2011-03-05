@@ -42,6 +42,14 @@ def init_static_path(static_path):
     The directory that you provide needs to be empty (if it exists),
     or to have been previously used by Sijax using this same function.
     If the provided directory contains some other files, Sijax will refuse to use it.
+
+    The following files will be made available in the specified directory:
+
+    * ``sijax.js`` - the core javascript file used by Sijax
+    * ``json2.js`` - JSON library that can be loaded for browsers that don't support native JSON (like IE <= 7)
+    * ``sijax_comet.js`` - the javascript file used by the Comet plugin
+    * ``sijax_upload.js`` - the javascript file used by the Upload plugin
+    * ``sijax_version`` - a system file that keeps track of versioning - do not touch it
     """
 
     import os, shutil, errno

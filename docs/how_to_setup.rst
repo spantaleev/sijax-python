@@ -120,7 +120,9 @@ Fixing this requires just one line of code during the server-side initialization
 This tells Sijax to load the ``json2.js`` file from the given URI, if it finds a browser that doesn't support JSON natively.
 If a browser that supports JSON natively is found, nothing new is loaded.
 
-The ``json2.js`` file is distributed with this project too and can be found in the ``sijax/js`` directory.
+The ``json2.js`` file is distributed with this project.
+
+You can easily mirror all Sijax static files to a directory of your choice using :func:`sijax.helper.init_static_path`.
 
 
 Note on the response result
