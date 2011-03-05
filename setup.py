@@ -21,6 +21,12 @@ Here's a tiny snippet of code to show what it's capable of doing::
 
     //The above function can be called from javascript using
     Sijax.request('say_hello', ['John', 'Greg']);
+
+Links
+-----
+
+* `source <https://github.com/spantaleev/sijax-python>`_
+* `documentation <http://packages.python.org/Sijax>`_
 """
 
 from setuptools import setup, find_packages
