@@ -13,7 +13,11 @@ You may want to call ``do_work_1``, which does a small portion of the work, upda
 It's also wasteful, because all those ``do_workX`` functions probably depend on some common data. They may all need to do a database call to get the object
 they're operating on, for example. With 3 requests, we'll have to do the database call in each 3 of them.
 
-With Comet, you get the shared data at the top, do a portion of your work and tell Sijax to send the data to the browser::
+Using the Comet plugin
+----------------------
+
+With the Comet plugin your functions can tell Sijax to push (flush) the data to the browser and continue executing.
+Here's an example::
 
     def comet_handler(obj_response):
         # do some work here..
@@ -26,11 +30,10 @@ With Comet, you get the shared data at the top, do a portion of your work and te
 
 
 ``yield`` tells Sijax to flush the commands we've queued so far in the response object (``obj_response``).
-If your Comet function doesn't ``yield`` at all, it's response will be returned all at once (in the end),
-much like a normal request function (that uses `response.BaseResponse`).
+If your Comet function doesn't ``yield`` at all, its response will be returned all at once (in the end),
+much like a normal request function (that uses :class:`sijax.response.BaseResponse.BaseResponse`).
 
-Let's see how we can register a handler function as a Comet function. If you don't do something special over
-regular function registrations, you'll end up with a regular function, which can't use yield!
+Let's see how we can register a handler function as a Comet function.
 
 All you need to to register a Comet function is to use the registration helper function that Comet provides::
 
@@ -50,7 +53,11 @@ There's a tiny difference in the way Comet functions are called, compared to reg
     //Comet function call
     sjxComet.request('func_name')
 
-There's also a mass registration helper function::
+
+Mass function registration
+--------------------------
+
+There's also a mass registration helper function, much like the one for regular Sijax functions (:ref:`mass-function-registration`)::
 
     from sijax.plugin.comet import register_comet_object
 
@@ -67,12 +74,12 @@ There's also a mass registration helper function::
     register_comet_object(sijax_instance, CometHandler)
 
 
-The response object
--------------------
+The CometResponse object
+------------------------
 
 The response object (``obj_response``) for functions registered with Comet is an instance of
-`sijax.plugin.comet.CometResponse`, which doesn't provide any more functionality than the default
-`sijax.response.BaseResponse` class used for regular functions, apart from the internal changes,
+:class:`sijax.plugin.comet.CometResponse.CometResponse`, which doesn't provide any more functionality than the default
+:class:`sijax.response.BaseResponse.BaseResponse` class used for regular functions, apart from the internal changes,
 which make streaming possible.
 
 

@@ -40,21 +40,25 @@ def register_upload_callback(sijax_instance, form_id, callback, **options):
     We suggest that the `args_extra` options is passed here, so that the
     response function would receive the files object or anything else it might be
     needing to manipulate file uploads.
-    By using `args_extra` you could change the response function's default header from:
+    By using `args_extra` you could change the response function's default header from::
+
         def upload_handler(obj_response, form_values)
-    to:
+
+    to::
+
         def upload_handler(obj_response, files, form_values)
+
     where the args_extra=[files] option was passed during registering.
 
     It's very important to keep in mind that unlike the regular
-    :meth:`Sijax.register_callback` function, this one returns some javascript code
+    :meth:`sijax.Sijax.Sijax.register_callback` function, this one returns some javascript code
     as a response. You need to execute that code on the page that contains the
     form you want to transform to Sijax upload.
 
-    :param sijax_instance: the :class:`Sijax` instance to register callbacks with
+    :param sijax_instance: the :class:`sijax.Sijax.Sijax` instance to register callbacks with
     :param form_id: the id of the form as it appears in the DOM
     :param callback: the function that would get called to process the upload request
-    :param options: options to pass to :meth:`Sijax.register_callback`
+    :param options: options to pass to :meth:`sijax.Sijax.Sijax.register_callback`
     :return: string - javascript code you need to put on your page,
                       to make your form use Sijax when submitted
     """

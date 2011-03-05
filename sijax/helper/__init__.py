@@ -34,9 +34,15 @@ if json is None:
 
 
 def init_static_path(static_path):
-    """Mirrors the important static files into a directory of your choice.
+    """Mirrors the important static files from the package into a directory of your choice.
+
     It may be a good idea to run this for your static path whenever Sijax gets upgraded, so that
-    your files will be kept in sync."""
+    your files will be kept in sync.
+
+    The directory that you provide needs to be empty (if it exists),
+    or to have been previously used by Sijax using this same function.
+    If the provided directory contains some other files, Sijax will refuse to use it.
+    """
 
     import os, shutil, errno
     import sijax

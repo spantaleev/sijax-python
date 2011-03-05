@@ -6,6 +6,15 @@ The Upload plugin for Sijax was developed to make ajax file uploads an easy task
 The idea is that you tell Sijax which form you want to be submitted to what handler function,
 and it transforms that form in a way to do that.
 
+
+Usage example
+-------------
+
+To associate a handler function with an upload form on the page you need to use :func:`sijax.plugin.upload.register_upload_callback`.
+
+.. automethod:: sijax.plugin.upload.register_upload_callback
+
+Here's an example.
 Suppose you have this markup on your page::
 
     <form id="formOne" name="formOne"                                                                                                                                              
@@ -30,7 +39,6 @@ Suppose you have this markup on your page::
         <input type="submit" value="Upload" />
     </form>
 
-
 To convert this form to a Sijax-enabled one, you need the following Python code::
 
     from sijax.plugin.upload import register_upload_callback
@@ -50,11 +58,11 @@ Notes on function registration
 It's important to note that the ``register_upload_callback`` function returns a short javascript code snippet,
 which takes care of preparing the form, so that it can be submitted using Sijax.
 
-The ``args_extra`` function registration parameter can be used here (read more on it in `callbacks.rst`).
-It's a good idea to always register upload handler function with one additional argument - the files object,
+The ``args_extra`` function registration parameter can be used here (see :ref:`args-extra`)
+It's a good idea to always register upload handler function with one extra argument - the files object,
 which would be used to manipulate the uploaded files.
 
-For some environment there's really no way around it, because at the context at which the upload handler function executes,
+For some environments there's really no way around it, because at the context at which the upload handler function executes,
 there may not be an easy way (if any at all) to get a reference to the files object.
 
 To pass an additional argument to ``upload_handler`` just do::
@@ -67,11 +75,21 @@ To pass an additional argument to ``upload_handler`` just do::
     register_upload_callback(sijax_instance, "formOne", upload_handler, args_extra=[files])
 
 
+The UploadResponse object
+-------------------------
+
+The response object (``obj_response``) for upload functions is an instance of :class:`sijax.plugin.upload.UploadResponse.UploadResponse`.
+It provides several additional attributes over the `sijax.response.BaseResponse.BaseResponse` class object, which is used with normal functions:
+
+.. autoattribute:: sijax.plugin.upload.UploadResponse.UploadResponse.form_id
+.. automethod:: sijax.plugin.upload.UploadResponse.UploadResponse.reset_form
+
+
 Streaming responses (Comet functionality)
 -----------------------------------------
 
-The way the Upload plugin works is very similar to the way the Upload plugin works.
-They share most of their code, so you can do comet streaming from your upload handler function too.
+The way the Upload plugin works is very similar to the way the Comet plugin (see :doc:`comet`) works.
+They share most of their code, so you can do Comet streaming from your upload handler function too.
 Let's take a look at an example which handles a hypothetical image upload::
 
     def upload_handler(obj_response, files, form_values):
@@ -84,14 +102,6 @@ Let's take a look at an example which handles a hypothetical image upload::
         obj_response.redirect(url)
 
 You don't need to do anything special to get streaming support in your upload handler functions.
-Every function registered via `sijax.plugin.upload.register_upload_callback` supports Comet (can yield/flush whenever it wants).
+Every function registered via :func:`sijax.plugin.upload.register_upload_callback` supports Comet (it can yield/flush whenever it wants).
 
 
-The response object
--------------------
-
-The response object (``obj_response``) for upload functions is an instance of `sijax.plugin.upload.UploadResponse`.
-It provides several additional attributes over the `sijax.response.BaseResponse` class object, which is used with normal functions::
-
-    - obj_response.form_id - the id of the form that was submitted (you can have several forms submit to the same upload handler function)
-    - obj_response.reset_form() - a new response command, which resets the form to the way it was after page loading

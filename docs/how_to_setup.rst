@@ -6,7 +6,7 @@ It has no dependencies, so it should be as painless as possible.
 
 Instead of using the Sijax library directly, you may want to install a wrapper for it
 in the form of an extension for the framework you're using (if such an extension is available).
-A Sijax extension for the `Flask microframework <http://flask.pocoo.org>`_ is planned to be developed soon.
+A Sijax extension for the `Flask microframework <http://flask.pocoo.org>`_ is available for example (`Flask-Sijax`_)
 Extensions for other frameworks may appear with time.
 
 If you can find such an extension for your framework of choice, you should take a look at the setup docs for it instead.
@@ -14,27 +14,34 @@ If you can find such an extension for your framework of choice, you should take 
 What follows is an overview of how all things stick together and how you can integrate it (hopefully) everywhere.
 
 
+Installing
+----------
+
+Sijax is available on pypi_ and can be installed using **pip** or **easy_install**::
+
+    pip install sijax
+    # or
+    easy_install sijax
+
+
 Javascript files
 ----------------
 
-Any page that needs to use Sijax will need to include a supported version of the jQuery library.
-The ``sijax.js`` file also needs to be loaded. The file is available with the source distribution.
-You can probably just symlink or copy it to your static files directory and change your html template,
-so that it starts including the file, like so::
+Any page that needs to use Sijax will need to include a supported version of the jQuery_ library.
+
+The ``sijax.js`` file also needs to be loaded. The file is available with the source distribution in the ``js`` directory.
+You can easily mirror all Sijax static files to a directory of your choice using :func:`sijax.helper.init_static_path`.
+
+Once you've located the ``sijax.js`` file in a web-accessible directory you need to include it on your page like this::
 
     <script type="text/javascript" src="/static/jquery.js"></script>
     <script type="text/javascript" src="/static/sijax.js"></script>
 
 
-You can load these files any way you want. Sijax leaves all that to you.
-You may (for example) decide to pack all of your project's javascript files in a single file, and include that instead.
-
-
 Server side initialization code
 -------------------------------
 
-There's some common Sijax initialization code on the Python side that prepares the environment.
-You can put it in a ``before_request`` handler function (if your framework supports that)::
+There's some common Sijax initialization code on the Python side that prepares the environment::
 
     from sijax.Sijax import Sijax
 
@@ -44,9 +51,9 @@ You can put it in a ``before_request`` handler function (if your framework suppo
     # Sijax uses POST data to pass information around
     sijax_instance.set_data(POST_DATA)
 
-    # The URL where requests coming from this page should be sent to
-    # Most commonly, this is the URL of the current page..
-    # Use your framework's functionality to determine what it is
+    # The URL where requests originating from this page should be sent to
+    # Most commonly, this is the URL of the current page.
+    # Use your framework's functionality to determine what it is.
     sijax_instance.set_request_uri(current_page_url)
 
     # Make the sijax_instance object available globally (or a proxy to it),
@@ -59,9 +66,9 @@ You can put it in a ``before_request`` handler function (if your framework suppo
 Javascript initialization code
 ------------------------------
 
-After the ``sijax.js`` file has been loaded, the initialization code needs to be executed.
-Sijax generates that javascript code dynamically (on every page request).
-To get the initialization code for the current request, do::
+After the ``sijax.js`` file has been loaded, the browser initialization code needs to be executed.
+
+Sijax generates that javascript code dynamically (on every page request) using :func:`sijax.Sijax.Sijax.get_js`::
 
     javascript_code = sijax_instance.get_js()
 
@@ -121,12 +128,16 @@ Note on the response result
 to it as its first argument. Your handler function calls methods on that response object (like ``html()``, ``css()``, etc)
 which queue commands. When your handler function exits those queued commands are represented as JSON and returned as a string.
 This means that ``sijax_instance.process_request()`` returns **a string** (valid JSON) for normal handler functions that use the
-`response.BaseResponse` class (default).
+:class:`sijax.response.BaseResponse.BaseResponse` class (default).
 
-If the Comet or Upload plugin is used, it does something else though.
-Comet is implemented using an iframe. We're not using XHR requests there. The purpose of the Comet plugin is to allow you
-to push some commands, do some more work, flush some more commands, as many times as you want until you finally exit the handler function.
+If the :doc:`comet` or :doc:`upload` is used, it does something else though.
+Comet is implemented using an iframe and doesn't use XHR requests. The purpose of the Comet plugin is to allow you
+to push some commands to the browser without exiting, do some more work, flush some more commands, as many times as you want until you finally exit the handler function.
 
 This means that it can't return a single string once. It needs to push (flush) the data several times, whenever you want it to.
-That's why such handler functions return a generator object instead. You can flush the data to the browser on each iteration.
-Each iteration's data is i **a string**, but it's **not JSON** - it's html markup (including javascript calls).
+That's why such handler functions return a **generator object** instead. You can flush the data to the browser on each iteration.
+Each iteration's data is **a string**, but it's **not JSON** - it's html markup (including javascript calls).
+
+.. _Flask-Sijax: http://pypi.python.org/pypi/Flask-Sijax/
+.. _pypi: http://pypi.python.org/pypi/Sijax/
+.. _jQuery: http://jquery.com/

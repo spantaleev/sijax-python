@@ -52,6 +52,8 @@ class BaseResponse(object):
 
         This class doesn't manipulate them, so it returns the original arguments,
         but other classes can override them however they need.
+
+        You generally don't need to use this.
         """
         return self._request_args
         
@@ -69,7 +71,10 @@ class BaseResponse(object):
         return self
     
     def clear_commands(self):
-        """Clears the commands buffer."""
+        """Clears the commands buffer.
+
+        All the commands added by other methods will be removed.
+        """
         self._commands = []
         return self
 
@@ -84,7 +89,7 @@ class BaseResponse(object):
    
     def html(self, selector, html):
         """
-        Adds the given html to the element specified by the selector,
+        Adds the given html to the element(s) specified by the jQuery selector,
         replacing any html content inside it.
 
         Scripts inside the html block are also executed.
@@ -95,7 +100,9 @@ class BaseResponse(object):
         return self._html(selector, html, "replace")
 
     def html_append(self, selector, html):
-        """Appends the given html to the element specified by the selector.
+        """Appends the given html to the element(s) specified by the jQuery selector.
+
+        Same as jQuery's: $(selector).html(value);
 
         Scripts inside the html block are also executed.
 
@@ -105,7 +112,7 @@ class BaseResponse(object):
         return self._html(selector, html, "append")
    
     def html_prepend(self, selector, html):
-        """Prepends the given html to the element specified by the selector.
+        """Prepends the given html to the element(s) specified by the jQuery selector.
 
         Scripts inside the html block are also executed.
 
@@ -125,10 +132,11 @@ class BaseResponse(object):
         return self.add_command(self.__class__.COMMAND_SCRIPT, params)
 
     def css(self, selector, property_name, value):
-        """Assigns a new style property value to all elements matching the selector.
+        """Assigns a new style property value to all elements matching the jQuery selector.
 
         Finds an element by the specified selector and changes
         the specified css (style) property to the given value.
+
         Same as jQuery's $(selector).css('property', 'value');
 
         Note that this can only change a single property at once.
@@ -150,7 +158,7 @@ class BaseResponse(object):
         return self.add_command(self.__class__.COMMAND_ATTR, params)
 
     def attr(self, selector, property_name, value):
-        """Assigns an attribute value to all elements matching the selector.
+        """Assigns an attribute value to all elements matching the jQuery selector.
 
         Finds an element by the specified selector and changes
         the specified property to the given value.
@@ -163,15 +171,18 @@ class BaseResponse(object):
         return self._attr(selector, property_name, value, "replace")
     
     def attr_append(self, selector, property_name, value):
-        """Same as attr(), but appends instead of assigning a new value."""
+        """Same as :meth:`attr`, but appends instead of assigning a new value."""
         return self._attr(selector, property_name, value, "append")
 
     def attr_prepend(self, selector, property_name, value):
-        """Same as attr(), but prepends instead of assigning a new value."""
+        """Same as :meth:`attr`, but prepends instead of assigning a new value."""
         return self._attr(selector, property_name, value, "prepend")
     
     def remove(self, selector):
-        """Removes all elements from the DOM that match the selector."""
+        """Removes all elements from the DOM that match the selector.
+
+        Same as jQuery's: $(selector).remove();
+        """
         params = {self.__class__.COMMAND_REMOVE: selector}
         return self.add_command(self.__class__.COMMAND_REMOVE, params)
 
@@ -200,6 +211,8 @@ class BaseResponse(object):
 
         The client side code will loop over the list and execute all the
         commands in order.
+
+        You generally don't need to use this function.
         """
         return json.dumps(self._commands)
     

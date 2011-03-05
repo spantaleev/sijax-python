@@ -43,7 +43,15 @@ class UploadResponse(StreamingIframeResponse):
 
     @property
     def form_id(self):
+        """The id of the form that was submitted.
+
+        You can have several forms handled by the same upload handler
+        function, which can be confusing unless you know the form id.
+        """
         return self._form_id
 
     def reset_form(self):
+        """Resets the form to the state it was in at page loading time.
+
+        Any changes made to it after that will be cleared."""
         return self.call("sjxUpload.resetForm", [self.form_id])

@@ -18,20 +18,40 @@ from .response.BaseResponse import BaseResponse
 from .exception import SijaxError
 
 class Sijax(object):
+    """The main Sijax object is what manages function registration and calling.
+
+    Sijax initialization usually looks like this::
+
+        instance = Sijax()
+        instance.set_data(POST_DICTIONARY_HERE)
+        instance.register_callback('function_name', some_function)
+
+    Sijax needs the POST parameters for the current request, to determine
+    whether the request is meant to be handled by Sijax.
+
+    Functions that are registered are the only functions exposed to the
+    browser world for calling.
+    """
     
     PARAM_REQUEST = 'sijax_rq'
     PARAM_ARGS = 'sijax_args'
     
-    #: Event called immediately before calling the response function
+    #: Event called immediately before calling the response function.
+    #: The event handler function receives the Response object argument.
     EVENT_BEFORE_PROCESSING = 'before_processing'
 
-    #: Event called immediately after calling the response function
+    #: Event called immediately after calling the response function.
+    #: The event handler function receives the Response object argument.
     EVENT_AFTER_PROCESSING = 'after_processing'
 
-    #: Event called when the function to be called is unknown
+    #: Event called when the function to be called is unknown (not registered).
+    #: The event handler function receives the Response object argument
+    #: followed by the public name of the function that was supposed to be called.
     EVENT_INVALID_REQUEST = 'invalid_request'
     
     #: Event called when the function was called in a wrong way (bad args count)
+    #: The event handler function receives the Response object argument
+    #: followed by the callback function that was not called correctly.
     EVENT_INVALID_CALL = 'invalid_call'
 
     #: An option when registering callbacks that stores the callback function
@@ -108,22 +128,23 @@ class Sijax(object):
         This "exposes" the callback to the browser by the given public name.
 
         The optional response class parameter could be used to substitute the regular
-        :class:`response.BaseResponse` class used by default. An instance of response_class
+        :class:`sijax.response.BaseResponse.BaseResponse` class used by default. An instance of response_class
         is passed automatically as a first parameter to your response function.
 
         The optional args_extra parameter allows you (or rather the framework that
         you're using) to pass a list of extra arguments to your response function, immediately
         after the first obj_response argument and before any other user-defined arguments.
         If you pass args_extra=["arg1", "arg2"] when registering a response function,
-        the function's signature should look like this:
+        the function's signature should look like this::
+
             def my_func(obj_response, arg1, arg2, {call params here})
-        
-        :param public_name: the name this function will be exposed to in the browser
+
+        :param public_name: the name with which this function will be exposed to in the browser
         :param callback: the actual function to call
         :param response_class: the obj_response class to use instead of BaseResponse -
                                it could also be a callable that returns a response object
         :param args_extra: an optional list of additional arguments to pass after
-                           obj_response and before form_values
+                           obj_response and before the other call arguments
         """
 
         if response_class is None:
@@ -168,7 +189,7 @@ class Sijax(object):
 
         Even if this is a sijax request, this doesn't mean it's absolutely valid.
         If the request is determined to be invalid when it gets called later,
-        the appropriate events will be fired (EVENT_INVALID_REQUEST/EVENT_INVALID_CALL).
+        the appropriate events will be fired (EVENT_INVALID_REQUEST, EVENT_INVALID_CALL).
         """
         for k in (self.__class__.PARAM_REQUEST, self.__class__.PARAM_ARGS):
             if k not in self._data:
@@ -237,7 +258,7 @@ class Sijax(object):
         callback is fired.
         After executing it, the EVENT_AFTER_PROCESSING event callback is fired.
 
-        The response could either be a string (for regular functions) or a
+        The returned result could either be a string (for regular functions) or a
         generator (for streaming functions like Comet or Upload).
         
         :param args: the arguments list to pass to the callback
@@ -245,6 +266,7 @@ class Sijax(object):
         :param options: more options - look at :meth:`register_callback` to see what else is available
         :return: string for regular callbacks or generator for streaming callbacks
         """
+
         cls = self.__class__
 
         # Another response class could be used to extend behavior
@@ -284,7 +306,8 @@ class Sijax(object):
         The provided EVENT_* constants should be used for handling system events.
         Additionally, you can use any string to define your own events and callbacks.
 
-        If more are needed, they may be chained manually, although it's not recommended.
+        If more than one handler per event needed,
+        handler may be chained manually, although it's not recommended.
         """
         self._events[event_name] = callback
         return self
@@ -315,7 +338,11 @@ class Sijax(object):
         return self
     
     def get_js(self):
-        """Returns the javascript needed to prepare the Sijax environment."""
+        """Returns the javascript needed to prepare the Sijax environment.
+
+        Note that the javascript code is unique and cannot be shared between
+        different pages.
+        """
 
         if self._request_uri is None:
             raise SijaxError("Trying to get the sijax js, but no request_uri is set!")
