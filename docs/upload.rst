@@ -13,6 +13,7 @@ Usage example
 To associate a handler function with an upload form on the page you need to use :func:`sijax.plugin.upload.register_upload_callback`.
 
 .. automethod:: sijax.plugin.upload.register_upload_callback
+   :noindex:
 
 Here's an example.
 Suppose you have this markup on your page::

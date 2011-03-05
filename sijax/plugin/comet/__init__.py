@@ -24,11 +24,23 @@ def _prepare_options(sijax_instance, options):
 
 def register_comet_callback(sijax_instance, public_name, callback, **options):
     """Helps you easily register Comet functions with Sijax.
+
+    This is the analogue of
+    :meth:`sijax.Sijax.Sijax.register_callback`,
+    but makes the registered function support Comet functionality.
+
+    Comet functions need to be called from the browser using::
+
+        sjxComet.request('function_name');
+
+    instead of the regular::
+
+        Sijax.request('function_name');
     
-    :param sijax_instance: the :class:`Sijax` instance to register callbacks with
+    :param sijax_instance: the :class:`sijax.Sijax.Sijax` instance to register callbacks with
     :param public_name: the name of the function that the client will use to call it
     :param callback: the actual function that would get called to process the request
-    :param options: options to pass to :meth:`Sijax.register_callback`
+    :param options: options to pass to :meth:`sijax.Sijax.Sijax.register_callback`
     """
     options = _prepare_options(sijax_instance, options)
     sijax_instance.register_callback(public_name, callback, **options)
@@ -37,9 +49,13 @@ def register_comet_callback(sijax_instance, public_name, callback, **options):
 def register_comet_object(sijax_instance, obj, **options):
     """Helps you easily register all "public" callable attributes of an object.
 
-    :param sijax_instance: the :class:`Sijax` instance to register callbacks with
+    This is the analogue of
+    :meth:`sijax.Sijax.Sijax.register_object`,
+    but makes the registered functions support Comet functionality.
+
+    :param sijax_instance: the :class:`sijax.Sijax.Sijax` instance to register callbacks with
     :param obj: the object whose methods to register with Sijax
-    :param options: options to pass to :meth:`Sijax.register_callback`
+    :param options: options to pass to :meth:`sijax.Sijax.Sijax.register_callback`
     """
     options = _prepare_options(sijax_instance, options)
     sijax_instance.register_object(obj, **options)

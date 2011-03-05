@@ -27,13 +27,28 @@ class StreamingIframeResponse(BaseResponse):
     This has the benefit of allowing us to do streaming, which means that
     response functions can flush the commands buffer whenever they want
     without exiting.
+
+    To push the current commands to the browser you need to use ``yield``,
+    like this::
+
+        def my_func(obj_response):
+            obj_response.alert('Doing some work.. wait a second')
+            yield obj_response
+
+            from time import sleep
+            sleep(5)
+
+            obj_response.alert('Done!')
+
+    Your don't need to explicitly ``yield`` at the end of a streaming function.
+    What remains unsent when the function exits will eventually get sent.
     """
 
     def __init__(self, *args, **kwargs):
         BaseResponse.__init__(self, *args, **kwargs)
         self._is_first_flush = True
     
-    def flush(self):
+    def _flush(self):
         """Generates command output to flush to the browser.
         
         The output is not JSON, because it's evaluated in an
@@ -45,23 +60,13 @@ class StreamingIframeResponse(BaseResponse):
         Such browsers include IE and Google Chrome.
         They're generally buffering the first ~1500 bytes of data,
         before they start interpretting it.
-
-        This should be used in streaming (Comet) functions when data
-        is to be flushed to the browser.
-        It should be used like this:
-            obj_response.alert("Message")
-            yield obj_response
-            ... some other code here..
-        which sends the alert() to the browser before executing the other code.
-
-        Your don't need to explicitly flush at the end of a streaming function.
-        What remains unflushed when the function exits will eventually get flushed.
         """
+
         output = """
         <script type="text/javascript">
             window.parent.Sijax.processCommands(%s);
         </script>
-        """ % self.get_json()
+        """ % self._get_json()
 
         self.clear_commands()
 
@@ -96,6 +101,7 @@ class StreamingIframeResponse(BaseResponse):
         either a generator (streaming function) or a string (normal function)
         to a generator.
         """
+
         try:
             response = callback(self, *args)
         except TypeError:
@@ -113,12 +119,12 @@ class StreamingIframeResponse(BaseResponse):
                 # we don't really care what it yields..
                 response.next()
                 if len(self._commands) != 0:
-                    yield self.flush()
+                    yield self._flush()
         else:
             # Normal (non-streaming) function
             # Let's flush implicitly for such functions
             if len(self._commands) != 0:
-                yield self.flush()
+                yield self._flush()
 
     def _process_call_chain(self, call_chain):
         """Executes all the callbacks in the chain for streaming response objects.
@@ -130,6 +136,7 @@ class StreamingIframeResponse(BaseResponse):
 
         :param call_chain: a list of two-tuples (callback, args list) to call
         """
+
         for callback, args in call_chain:
             generator = self._process_callback(callback, args)
             for string in generator:

@@ -128,12 +128,11 @@ class Sijax(object):
         This "exposes" the callback to the browser by the given public name.
 
         The optional response class parameter could be used to substitute the regular
-        :class:`sijax.response.BaseResponse.BaseResponse` class used by default. An instance of response_class
+        :class:`sijax.response.BaseResponse.BaseResponse` class used by default. An instance of ``response_class``
         is passed automatically as a first parameter to your response function.
 
-        The optional args_extra parameter allows you (or rather the framework that
-        you're using) to pass a list of extra arguments to your response function, immediately
-        after the first obj_response argument and before any other user-defined arguments.
+        The optional ``args_extra`` parameter allows you to pass a list of extra arguments to your response function, immediately
+        after the first ``obj_response`` argument and before the other call arguments.
         If you pass args_extra=["arg1", "arg2"] when registering a response function,
         the function's signature should look like this::
 
@@ -141,10 +140,10 @@ class Sijax(object):
 
         :param public_name: the name with which this function will be exposed to in the browser
         :param callback: the actual function to call
-        :param response_class: the obj_response class to use instead of BaseResponse -
-                               it could also be a callable that returns a response object
+        :param response_class: the response class, an instance of which to use instead of
+                               :class:`sijax.response.BaseResponse.BaseResponse`
         :param args_extra: an optional list of additional arguments to pass after
-                           obj_response and before the other call arguments
+                           the response object and before the other call arguments
         """
 
         if response_class is None:
@@ -174,7 +173,8 @@ class Sijax(object):
         The object could be anything (module, class, class instance, etc.)
 
         :param obj: the object whose callable attributes to register
-        :param options: the options to be sent to :meth:`register_callback`
+        :param options: the options to be sent to
+                        :meth:`sijax.Sijax.Sijax.register_callback`
         """
         for attr_name in dir(obj):
             if attr_name.startswith('_'):
@@ -286,7 +286,7 @@ class Sijax(object):
         # Note that we're not passing args_extra to it, as we don't want responses
         # to know anything about that yet
         obj_response = response_class(self, args)
-        call_args = args_extra + obj_response.request_args
+        call_args = args_extra + obj_response._get_request_args()
         
         event_before_processing = cls.EVENT_BEFORE_PROCESSING
         event_after_processing = cls.EVENT_AFTER_PROCESSING

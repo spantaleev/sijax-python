@@ -46,23 +46,16 @@ class BaseResponse(object):
         self._sijax = sijax_instance
         self._request_args = request_args
     
-    @property
-    def request_args(self):
-        """Returns the arguments array to pass to callbacks.
+    def _get_request_args(self):
+        """Returns the arguments list to pass to callbacks.
 
-        This class doesn't manipulate them, so it returns the original arguments,
+        This class doesn't manipulate them, so it returns the original call arguments,
         but other classes can override them however they need.
-
-        You generally don't need to use this.
         """
         return self._request_args
         
-    def add_command(self, cmd_type, params = None):
-        """Adds a raw command to the buffer to send to the client.
-
-        You generally don't need to use this at all,
-        unless you really know what you're doing.
-        """
+    def _add_command(self, cmd_type, params = None):
+        """Adds a raw command to the buffer to send to the client."""
         if params is None:
             params = {}
         params['type'] = cmd_type
@@ -81,11 +74,11 @@ class BaseResponse(object):
     def alert(self, message):
         """Sends a window.alert command to the browser."""
         params = {self.__class__.COMMAND_ALERT: message}
-        return self.add_command(self.__class__.COMMAND_ALERT, params)
+        return self._add_command(self.__class__.COMMAND_ALERT, params)
     
     def _html(self, selector, html, set_type):
         params = {"selector": selector, "html": html, "setType": set_type}
-        return self.add_command(self.__class__.COMMAND_HTML, params)
+        return self._add_command(self.__class__.COMMAND_HTML, params)
    
     def html(self, selector, html):
         """
@@ -129,7 +122,7 @@ class BaseResponse(object):
         unless you explicitly do it.
         """
         params = {self.__class__.COMMAND_SCRIPT: js}
-        return self.add_command(self.__class__.COMMAND_SCRIPT, params)
+        return self._add_command(self.__class__.COMMAND_SCRIPT, params)
 
     def css(self, selector, property_name, value):
         """Assigns a new style property value to all elements matching the jQuery selector.
@@ -148,14 +141,14 @@ class BaseResponse(object):
         :param value: the new value to assign to the property
         """
         params = {"selector": selector, "key": property_name, "value": value}
-        return self.add_command(self.__class__.COMMAND_CSS, params)
+        return self._add_command(self.__class__.COMMAND_CSS, params)
 
     def _attr(self, selector, property_name, value, set_type):
         params = {
             "selector": selector, "key": property_name,
             "value": value, "setType": set_type
         }
-        return self.add_command(self.__class__.COMMAND_ATTR, params)
+        return self._add_command(self.__class__.COMMAND_ATTR, params)
 
     def attr(self, selector, property_name, value):
         """Assigns an attribute value to all elements matching the jQuery selector.
@@ -184,7 +177,7 @@ class BaseResponse(object):
         Same as jQuery's: $(selector).remove();
         """
         params = {self.__class__.COMMAND_REMOVE: selector}
-        return self.add_command(self.__class__.COMMAND_REMOVE, params)
+        return self._add_command(self.__class__.COMMAND_REMOVE, params)
 
     
     def redirect(self, uri):
@@ -204,15 +197,13 @@ class BaseResponse(object):
             raise SijaxError("call() expects a list, a tuple or None for the args list")
 
         params = {self.__class__.COMMAND_CALL: js_func_name, "params": func_params}
-        return self.add_command(self.__class__.COMMAND_CALL, params)
+        return self._add_command(self.__class__.COMMAND_CALL, params)
     
-    def get_json(self):
+    def _get_json(self):
         """Returns a JSON representation of the commands buffer list.
 
         The client side code will loop over the list and execute all the
         commands in order.
-
-        You generally don't need to use this function.
         """
         return json.dumps(self._commands)
     
@@ -253,5 +244,5 @@ class BaseResponse(object):
         """
         for callback, args in call_chain:
             self._process_callback(callback, args)
-        return self.get_json()
+        return self._get_json()
 

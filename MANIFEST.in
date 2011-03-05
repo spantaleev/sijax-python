@@ -6,3 +6,4 @@ recursive-include sijax/plugin/comet/js *
 recursive-include sijax/plugin/upload/js *
 
 recursive-exclude * *.swp
+recursive-exclude docs/_build *

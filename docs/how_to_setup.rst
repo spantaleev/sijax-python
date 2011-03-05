@@ -1,11 +1,12 @@
 How to setup Sijax for your project
 ===================================
 
-To get started with Sijax, you'll first need to install the Python library.
+To get started with Sijax, you'll first need to install the Sijax_ Python library.
 It has no dependencies, so it should be as painless as possible.
 
 Instead of using the Sijax library directly, you may want to install a wrapper for it
 in the form of an extension for the framework you're using (if such an extension is available).
+
 A Sijax extension for the `Flask microframework <http://flask.pocoo.org>`_ is available for example (`Flask-Sijax`_)
 Extensions for other frameworks may appear with time.
 
@@ -30,6 +31,7 @@ Javascript files
 Any page that needs to use Sijax will need to include a supported version of the jQuery_ library.
 
 The ``sijax.js`` file also needs to be loaded. The file is available with the source distribution in the ``js`` directory.
+
 You can easily mirror all Sijax static files to a directory of your choice using :func:`sijax.helper.init_static_path`.
 
 Once you've located the ``sijax.js`` file in a web-accessible directory you need to include it on your page like this::
@@ -138,6 +140,7 @@ This means that it can't return a single string once. It needs to push (flush) t
 That's why such handler functions return a **generator object** instead. You can flush the data to the browser on each iteration.
 Each iteration's data is **a string**, but it's **not JSON** - it's html markup (including javascript calls).
 
+.. _Sijax: http://pypi.python.org/pypi/Sijax/
 .. _Flask-Sijax: http://pypi.python.org/pypi/Flask-Sijax/
 .. _pypi: http://pypi.python.org/pypi/Sijax/
 .. _jQuery: http://jquery.com/
