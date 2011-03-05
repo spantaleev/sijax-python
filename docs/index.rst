@@ -22,6 +22,7 @@ Contents:
    comet
    upload
    api
+   faq
 
 .. _github.com: https://github.com/spantaleev/sijax-python
 
