@@ -10,6 +10,10 @@ and it transforms that form in a way to do that.
 Usage example
 -------------
 
+To make use of the Upload plugin, you'll need to include the ``sijax_upload.js`` file on your page.
+
+``sijax_upload.js`` can be mirrored to a directory of your choise using :func:`sijax.helper.init_static_path`.
+
 To associate a handler function with an upload form on the page you need to use :func:`sijax.plugin.upload.register_upload_callback`.
 
 .. automethod:: sijax.plugin.upload.register_upload_callback
@@ -79,11 +83,16 @@ To pass an additional argument to ``upload_handler`` just do::
 The UploadResponse object
 -------------------------
 
-The response object (``obj_response``) for upload functions is an instance of :class:`sijax.plugin.upload.UploadResponse.UploadResponse`.
-It provides several additional attributes over the `sijax.response.BaseResponse.BaseResponse` class object, which is used with normal functions:
+Functions registered via the Upload plugin using :func:`sijax.plugin.upload.register_upload_callback` receive
+an ``obj_response`` as their first argument, just like any other Sijax function.
 
-.. autoattribute:: sijax.plugin.upload.UploadResponse.UploadResponse.form_id
-.. automethod:: sijax.plugin.upload.UploadResponse.UploadResponse.reset_form
+The difference is that the ``obj_response`` object is a from the :class:`sijax.plugin.upload.UploadResponse.UploadResponse` class,
+which provides a bit more functionality than the regular :class:`sijax.response.BaseResponse.BaseResponse` class.
+
+.. autoclass:: sijax.plugin.upload.UploadResponse.UploadResponse
+   :show-inheritance:
+   :members:
+   :noindex:
 
 
 Streaming responses (Comet functionality)

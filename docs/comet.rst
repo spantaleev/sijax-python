@@ -16,6 +16,10 @@ they're operating on, for example. With 3 requests, we'll have to do the databas
 Using the Comet plugin
 ----------------------
 
+To make use of the Comet plugin, you'll need to include the ``sijax_comet.js`` file on your page.
+
+``sijax_comet.js`` can be mirrored to a directory of your choise using :func:`sijax.helper.init_static_path`.
+
 With the Comet plugin your functions can tell Sijax to push (flush) the data to the browser and continue executing.
 Here's an example::
 
