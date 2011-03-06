@@ -1,3 +1,5 @@
+.. _comet-plugin:
+
 Comet Plugin
 ============
 

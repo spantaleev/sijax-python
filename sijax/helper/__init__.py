@@ -59,7 +59,7 @@ def init_static_path(static_path):
         """NOOP if the directory exists. If not, it creates the whole directory tree."""
         try:
             os.makedirs(path)
-        except OSError as exc:
+        except OSError, exc:
             if exc.errno != errno.EEXIST:
                 raise exc
 

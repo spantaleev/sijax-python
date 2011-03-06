@@ -1,3 +1,5 @@
+from __future__ import with_statement
+
 import sys
 import os
 import unittest
@@ -148,7 +150,7 @@ class SijaxMainTestCase(unittest.TestCase):
         # streaming functions return generators instead..
         self.assertTrue(isinstance(response, StringType))
 
-        import json
+        from sijax.helper import json
         try:
             commands = json.loads(response)
         except:
@@ -198,7 +200,7 @@ class SijaxMainTestCase(unittest.TestCase):
 
     def test_process_request_calls_invalid_request_event_for_invalid_requests(self):
         from types import StringType
-        import json
+        from sijax.helper import json
 
         # An invalid request is a request for a function that's not registered,
         # meaning the request is invalid as far as sijax is concerned
@@ -227,7 +229,7 @@ class SijaxMainTestCase(unittest.TestCase):
 
     def test_process_request_calls_invalid_call_event_for_invalid_calls(self):
         from types import StringType, FunctionType
-        import json
+        from sijax.helper import json
 
         # An invalid call is a call to a function that appears valid.
         # The function is registered (known), but calling fails, because
@@ -476,7 +478,7 @@ class SijaxMainTestCase(unittest.TestCase):
             try:
                 inst.execute_callback([], callback)
                 success = True
-            except SijaxError as ex:
+            except SijaxError, ex:
                 pass
 
             self.assertEqual(should_succeed, success, "Failure for %s" % repr(args_value))
