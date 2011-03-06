@@ -45,15 +45,13 @@ If we want to call this function now, we can just do::
     </script>
 
 The first argument that ``Sijax.request()`` accepts in the browser is the public name of the function to call.
-The second argument is an optional array of arguments to pass to the Python function.
+The second argument is an optional array/list of arguments to pass to the Python function.
 This ``Sijax.request()`` call rates the news item (with id of 324) with 4 stars.
+To learn more on ``Sijax.request()``, see :ref:`clientside-sijax-request`.
 
 Sijax will update the DOM element which matches the jQuery selector ``#news_rating`` with the new rating value.
 It would then show an alert message to the user.
 
-``Sijax.request()`` also accepts a third optional (and more advanced) argument,
-which can specify some custom options to pass to ``jQuery.ajax``.
-You may want to use it to setup call retries, timeouts, etc.
 
 
 .. _mass-function-registration:
