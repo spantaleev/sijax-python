@@ -8,7 +8,7 @@ import shutil
 from contextlib import contextmanager
 
 
-sijax_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sijax_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(sijax_path)
 
 from sijax.Sijax import Sijax
