@@ -108,21 +108,27 @@ Sijax.request = function (functionName, callArgs, requestParams) {
 
 Sijax.getFormValues = function (formSelector) {
 	var values = {},
-		regexNested = /(\w+)\[(\w+)\]/,
+		regexNested = /^(\w+)\[(\w+)\]$/, //<input type="text" name="name[key]" />
+		regexList = /^(\w+)\[\]$/, //<input type="checkbox" name="name[]" />
 		elementsSelector = formSelector + ' input, ' + formSelector + ' textarea, ' + formSelector + ' select';
 
 	$.each($(elementsSelector), function (idx, object) {
 		var attrName = $(this).attr('name'),
 			attrValue = $(this).attr('value'),
 			attrDisabled = $(this).attr('disabled'),
-			nestedMatches;
+			tagName = this.tagName,
+			type = $(this).attr('type'),
+			nestedMatches,
+			listMatches;
 
 		if (attrName === '' || attrDisabled === true) {
 			return;
 		}
 		
-		if (this.tagName === 'INPUT' && $(this).attr('type') === 'checkbox' && ! $(this).attr('checked')) {
-			return;
+		if (tagName === 'INPUT') {
+			if ((type === 'checkbox' || type === 'radio') && ! $(this).attr('checked')) {
+				return;
+			}
 		}
 
 		if (attrValue === "") {
@@ -131,17 +137,31 @@ Sijax.getFormValues = function (formSelector) {
 			attrValue = new String(attrValue);
 		}
 
+		//0: wholeMatch, 1: outerObjectKey, 2: innerKey
 		nestedMatches = regexNested.exec(attrName);
-		if (nestedMatches === null) {
-			values[attrName] = attrValue;
-		} else {
-			//0: wholeMatch, 1: outerObjectKey, 2: innerKey
+		if (nestedMatches !== null) {
 			if (values[nestedMatches[1]] === undefined) {
 				values[nestedMatches[1]] = {};
 			}
-
 			values[nestedMatches[1]][nestedMatches[2]] = attrValue;
+			return;
 		}
+
+		//0: wholeMatch, 1: attrNameReal
+		listMatches = regexList.exec(attrName);
+		if (listMatches !== null) {
+			//Multiple fields with the same `name[]`..
+			//The result needs to be an array of values
+			var attrNameReal = listMatches[1];
+			if (values[attrNameReal] === undefined || ! (values[attrNameReal] instanceof Array)) {
+				values[attrNameReal] = [];
+			}
+			values[attrNameReal].push(attrValue);
+			return;
+		}
+
+		//Regular field name, single value
+		values[attrName] = attrValue;
 	});
 
 	return values;

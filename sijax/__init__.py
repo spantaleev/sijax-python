@@ -6,7 +6,7 @@ from . import plugin
 from . import Sijax
 
 __title__ = 'sijax'
-__version__ = '0.1.7'
+__version__ = '0.1.8'
 __author__ = 'Slavi Pantaleev'
 __license__ = 'BSD'
 __copyright__ = 'Copyright 2011 Slavi Pantaleev'
