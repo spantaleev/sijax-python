@@ -121,7 +121,7 @@ Here's some HTML markup and the result of ``Sijax.getFormValues()``::
         Sijax.request('process_form', [values]);
     </script>
 
-In the above example, we've used the ``#my_form`` jQuery selector to find our form, but any other jQuery string selector would work.
+In the above example, we've used the ``#my_form`` jQuery selector to find our form, but any other jQuery selector would work.
 
 You can see that the value for ``textbox2`` was skipped, because the field was disabled.
 The value for the third text field was also skipped, because the field is missing a name.
