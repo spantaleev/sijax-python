@@ -107,24 +107,19 @@ Sijax.request = function (functionName, callArgs, requestParams) {
 };
 
 Sijax.getFormValues = function (formSelector) {
-	var values = {},
-		regexNested = /^(\w+)\[(\w+)\]$/, //<input type="text" name="name[key]" />
-		regexList = /^(\w+)\[\]$/, //<input type="checkbox" name="name[]" />
-		elementsSelector = formSelector + ' input, ' + formSelector + ' textarea, ' + formSelector + ' select';
+	var values = {};
 
-	$.each($(elementsSelector), function (idx, object) {
+	$.each($(formSelector).find('input, textarea, select'), function (idx, object) {
 		var attrName = $(this).attr('name'),
 			attrValue = $(this).attr('value'),
-			attrDisabled = $(this).attr('disabled'),
 			tagName = this.tagName,
 			type = $(this).attr('type'),
-			nestedMatches,
-			listMatches;
+			nestingParts;
 
-		if (attrName === '' || attrDisabled === true) {
+		if (attrName === '' || $(this).attr('disabled') === true) {
 			return;
 		}
-		
+
 		if (tagName === 'INPUT') {
 			if ((type === 'checkbox' || type === 'radio') && ! $(this).attr('checked')) {
 				return;
@@ -137,31 +132,38 @@ Sijax.getFormValues = function (formSelector) {
 			attrValue = new String(attrValue);
 		}
 
-		//0: wholeMatch, 1: outerObjectKey, 2: innerKey
-		nestedMatches = regexNested.exec(attrName);
-		if (nestedMatches !== null) {
-			if (values[nestedMatches[1]] === undefined) {
-				values[nestedMatches[1]] = {};
+		if (attrName.indexOf('[') === -1) {
+			//Regular field name, not really nested
+			nestingParts = [attrName];
+		} else {
+			//Nested field, like `something[key][key2][]`
+			var nestedMatches = /^(\w+)\[(.*?)\]$/.exec(attrName);
+			if (nestedMatches === null) {
+				//Bad name field syntax, skip this attribute
+				return;
 			}
-			values[nestedMatches[1]][nestedMatches[2]] = attrValue;
-			return;
+			//nestedMatches looks like this: `[attrNameReal, 'key][key2][']`
+			nestingParts = [nestedMatches[1]].concat(nestedMatches[2].split(']['));
 		}
 
-		//0: wholeMatch, 1: attrNameReal
-		listMatches = regexList.exec(attrName);
-		if (listMatches !== null) {
-			//Multiple fields with the same `name[]`..
-			//The result needs to be an array of values
-			var attrNameReal = listMatches[1];
-			if (values[attrNameReal] === undefined || ! (values[attrNameReal] instanceof Array)) {
-				values[attrNameReal] = [];
-			}
-			values[attrNameReal].push(attrValue);
-			return;
-		}
+		var nestingRef = values,
+			lastPart = nestingParts.pop(),
+			isArrayTarget = (lastPart === '');
 
-		//Regular field name, single value
-		values[attrName] = attrValue;
+		//Descend into the structure, creating any missing elements
+		$.each(nestingParts, function (i, part) {
+			if (typeof(nestingRef[part]) === 'undefined') {
+				var isLastPart = (nestingParts.length - 1 === i);
+				nestingRef[part] = (isLastPart && isArrayTarget ? [] : {});
+			}
+			nestingRef = nestingRef[part];
+		});
+
+		if (isArrayTarget) {
+			nestingRef.push(attrValue);
+		} else {
+			nestingRef[lastPart] = attrValue;
+		}
 	});
 
 	return values;
