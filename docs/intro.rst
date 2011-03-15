@@ -26,12 +26,7 @@ We'll use the following javascript code to make our ajax request::
         Sijax.request('update_news');
     </script>
 
-Here's what we've really done so far:
-
-* We've created a page element and assigned an ID to it, so that we can easily update it.
-* We've called the ``Sijax.request()`` function from the browser, passing the name of the function we want to handle our request
-* Sijax now creates a special request to your Python server
-
+Sijax now creates a special request to your Python server.
 
 We'll define the following Python function that handles the news feed update
 and we'll make it available for calling, by registering it with Sijax::
@@ -56,10 +51,9 @@ and we'll make it available for calling, by registering it with Sijax::
 Here's what this really does:
 
 * We have defined a response function (a handler) - ``update_news``
-* We have created an instance of Sijax
-* We have passed the POST data to Sijax, so that it can inspect it and determine if the current request is meant to be handled by Sijax
+* We have initialized Sijax with the POST data, so that it can inspect it and determine if the current request is meant to be handled by Sijax
 * We have registered the ``update_news`` function with Sijax. This tells Sijax that the function ``update_news`` is to be exposed for calling from the browser, with the public name of ``update_news``.
-* We've detected whether the request is meant to be handled by Sijax. If it is, we're telling Sijax to generate a response, which we return to the browser.
+* We've detected whether the request is meant to be handled by Sijax. If it is, we're telling Sijax to process the request.
 
 Anyone who's used jQuery would recognize the similar syntax.
 The ``obj_response`` object automatically passed to your function is your way of feeding data back to the browser.
