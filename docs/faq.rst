@@ -7,7 +7,7 @@ Frequently Asked Questions and Notes
 How light is it?
 ----------------
 
-The javascript core is less than 3kB in its original form.
+The javascript core is about 4kB in its original form.
 
 Keep in mind that you need jQuery loaded on the page for it to function.
 It was tested with jQuery ``1.4`` and ``1.5``, but some older releases should/may also work.
@@ -48,8 +48,3 @@ Known limitations
 * Requires jQuery - since most projects probably already use jQuery, this may not be a problem
 * Requires JSON - an additional 3kB library has to be loaded (automatically) for IE <= 7
 
-
-Known issues
-------------
-
-* On very rare occasions, empty strings ("") are passed as "null" (affects IE only)
