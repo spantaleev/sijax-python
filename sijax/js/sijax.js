@@ -18,11 +18,11 @@ Sijax.setJsonUri = function (uri) {
 		return;
 	}
 
-	$.getScript(uri);
+	jQuery.getScript(uri);
 };
 
 Sijax.processCommands = function (commandsArray) {
-	$.each(commandsArray, function (idx, command) {
+	jQuery.each(commandsArray, function (idx, command) {
 		var callback = Sijax.getCommandProcessor(command.type);
 		callback(command);
 	});
@@ -37,7 +37,7 @@ Sijax.process_alert = function (params) {
 };
 
 Sijax.process_html = function (params) {
-	var selectorResult = $(params.selector);
+	var selectorResult = jQuery(params.selector);
 	
 	if (params.setType == 'replace') {
 		selectorResult.html(params.html);
@@ -49,7 +49,7 @@ Sijax.process_html = function (params) {
 };
 
 Sijax.process_attr = function (params) {
-	var selectorResult = $(params.selector);
+	var selectorResult = jQuery(params.selector);
 	
 	if (params.setType === 'replace') {
 		selectorResult.attr(params.key, params.value);
@@ -61,7 +61,7 @@ Sijax.process_attr = function (params) {
 };
 
 Sijax.process_css = function (params) {
-	$(params.selector).css(params.key, params.value);
+	jQuery(params.selector).css(params.key, params.value);
 };
 
 Sijax.process_script = function (params) {
@@ -69,7 +69,7 @@ Sijax.process_script = function (params) {
 };
 
 Sijax.process_remove = function (params) {
-	$(params.remove).remove();
+	jQuery(params.remove).remove();
 };
 
 Sijax.process_call = function (params) {
@@ -103,25 +103,25 @@ Sijax.request = function (functionName, callArgs, requestParams) {
 		"success": Sijax.processCommands
 	};
 	
-	$.ajax($.extend(defaultRequestParams, requestParams));
+	jQuery.ajax(jQuery.extend(defaultRequestParams, requestParams));
 };
 
 Sijax.getFormValues = function (formSelector) {
 	var values = {};
 
-	$.each($(formSelector).find('input, textarea, select'), function (idx, object) {
-		var attrName = $(this).attr('name'),
-			attrValue = $(this).attr('value'),
+	jQuery.each(jQuery(formSelector).find('input, textarea, select'), function (idx, object) {
+		var attrName = jQuery(this).attr('name'),
+			attrValue = jQuery(this).attr('value'),
 			tagName = this.tagName,
-			type = $(this).attr('type'),
+			type = jQuery(this).attr('type'),
 			nestingParts;
 
-		if (attrName === '' || $(this).attr('disabled') === true) {
+		if (attrName === '' || jQuery(this).attr('disabled') === true) {
 			return;
 		}
 
 		if (tagName === 'INPUT') {
-			if ((type === 'checkbox' || type === 'radio') && ! $(this).attr('checked')) {
+			if ((type === 'checkbox' || type === 'radio') && ! jQuery(this).attr('checked')) {
 				return;
 			}
 		}
@@ -151,7 +151,7 @@ Sijax.getFormValues = function (formSelector) {
 			isArrayTarget = (lastPart === '');
 
 		//Descend into the structure, creating any missing elements
-		$.each(nestingParts, function (i, part) {
+		jQuery.each(nestingParts, function (i, part) {
 			if (typeof(nestingRef[part]) === 'undefined') {
 				var isLastPart = (nestingParts.length - 1 === i);
 				nestingRef[part] = (isLastPart && isArrayTarget ? [] : {});

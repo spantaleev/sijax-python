@@ -8,7 +8,7 @@ sjxUpload.getFrameId = function (formId) {
 
 sjxUpload.prepareForm = function (formId, callbackName) {
 	var frameId = sjxUpload.getFrameId(formId),
-		formObject = $('#' + formId),
+		formObject = jQuery('#' + formId),
 		requestArgs = JSON.stringify([formId]),
 		element;
 	
@@ -42,9 +42,9 @@ sjxUpload.prepareForm = function (formId, callbackName) {
 };
 
 sjxUpload.resetForm = function (formId) {
-	var callbackName = $('#' + formId).attr(Sijax.PARAM_REQUEST).value;
+	var callbackName = jQuery('#' + formId).attr(Sijax.PARAM_REQUEST).value;
 	
-	$('#' + formId).each(function () {
+	jQuery('#' + formId).each(function () {
 		this.reset();
 	});
 	
@@ -61,12 +61,12 @@ sjxUpload.registerForm = function (params) {
 	iframe.setAttribute('name', frameId);
 	iframe.setAttribute('style', 'display: none');
 
-	$('#' + formId).append(iframe);
+	jQuery('#' + formId).append(iframe);
 	
 	if (window.frames[frameId].name !== frameId) {
 		//IE bugfixes
 		window.frames[frameId].name = frameId;
-		$('#' + frameId).css('display', 'none');
+		jQuery('#' + frameId).css('display', 'none');
 	}
 
 	sjxUpload.prepareForm(formId, callbackName);

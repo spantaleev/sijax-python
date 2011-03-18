@@ -21,19 +21,19 @@ sjxComet.request = function (functionName, callArgs) {
 	form.setAttribute('action', Sijax.getRequestUri());
 	form.setAttribute('target', frameId);
 	
-	$('body').append(iframe);
-	$('body').append(form);
+	jQuery('body').append(iframe);
+	jQuery('body').append(form);
 	
-	$('#' + frameId).bind('load', function () {
+	jQuery('#' + frameId).bind('load', function () {
 		//We need to remove the iframe/form, but only after leaving this callback
 		//Or Google Chrome would report "Failed to load resource"
 		window.setTimeout(function () {
-			$('#' + frameId).remove();
-			$('#' + formId).remove();
+			jQuery('#' + frameId).remove();
+			jQuery('#' + formId).remove();
 		});
 	});
 	
-	var formObject = $('#' + formId);
+	var formObject = jQuery('#' + formId);
 	
 	var element = document.createElement('input');
 	element.setAttribute('type', 'hidden');
