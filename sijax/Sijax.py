@@ -125,20 +125,46 @@ class Sijax(object):
     def register_callback(self, public_name, callback, response_class=None, args_extra=None):
         """Registers the specified callback function with the given name.
 
-        This "exposes" the callback to the browser by the given public name.
+        Example::
 
-        The optional response class parameter could be used to substitute the regular
-        :class:`sijax.response.BaseResponse.BaseResponse` class used by default. An instance of ``response_class``
-        is passed automatically as a first parameter to your response function.
+            def handler(obj_response):
+                pass
 
-        The optional ``args_extra`` parameter allows you to pass a list of extra arguments to your response function, immediately
-        after the first ``obj_response`` argument and before the other call arguments.
-        If you pass args_extra=["arg1", "arg2"] when registering a response function,
-        the function's signature should look like this::
+            # Exposing the same function by 2 different names
+            instance.register_callback('test', handler)
+            instance.register_callback('test2', handler)
 
-            def my_func(obj_response, arg1, arg2, {call params here})
+        The optional ``response_class`` parameter could be used to substitute the
+        :class:`sijax.response.BaseResponse.BaseResponse` class used by default.
+        An instance of ``response_class`` is passed automatically
+        as a first parameter to your response function (``obj_response``).
 
-        :param public_name: the name with which this function will be exposed to in the browser
+        Example::
+
+            def handler(obj_response):
+                pass
+
+            class CustomResponse(sijax.response.BaseResponse.BaseResponse):
+                pass
+
+            # `obj_response` passed to `handler` will be an instance of CustomResponse
+            instance.register_callback('test', handler, response_class=CustomResponse)
+
+        The optional ``args_extra`` parameter allows you to pass a list of
+        extra arguments to your response function, immediately
+        after the ``obj_response`` argument and before the other call arguments.
+
+        Example::
+
+            def handler(obj_response, arg1, arg2, arg3):
+                # arg1 = 'arg1'
+                # arg2 = 'arg2'
+                # arg3 - expected to come from the browser
+                pass
+
+            instance.register_callback('test', handler, args_extra=['arg1', 'arg2'])
+
+        :param public_name: the name with which this function will be exposed in the browser
         :param callback: the actual function to call
         :param response_class: the response class, an instance of which to use instead of
                                :class:`sijax.response.BaseResponse.BaseResponse`
