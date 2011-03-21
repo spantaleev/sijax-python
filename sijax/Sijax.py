@@ -329,11 +329,11 @@ class Sijax(object):
 
         Only one callback can be executed per event.
 
-        The provided EVENT_* constants should be used for handling system events.
+        The provided ``EVENT_*`` constants should be used for handling system events.
         Additionally, you can use any string to define your own events and callbacks.
 
-        If more than one handler per event needed,
-        handler may be chained manually, although it's not recommended.
+        If more than one handler per event is needed, you can chain them
+        manually, although it's not recommended.
         """
         self._events[event_name] = callback
         return self
