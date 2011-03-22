@@ -164,6 +164,14 @@ class SijaxMainTestCase(unittest.TestCase):
 
         self.assertEqual(["script", "alert", "css"], commands_history)
 
+    def test_bad_callback_objects_raise_exception(self):
+        inst = Sijax()
+        try:
+            inst.execute_callback(callback='non-callable object', args=[])
+            self.fail('SijaxError not raised when bad callback was given!')
+        except SijaxError:
+            pass
+
     def test_get_js_fails_with_missing_request_uri(self):
         inst = Sijax()
         try:
