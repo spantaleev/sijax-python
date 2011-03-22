@@ -41,6 +41,7 @@ and we'll make it available for calling, by registering it with Sijax::
 
         instance = Sijax()
         instance.set_data(POST_DICTIONARY_HERE)
+        instance.set_request_uri(URI_OF_THE_CURRENT_PAGE)
         instance.register_callback("update_news", update_news)
         if instance.is_sijax_request():
             return instance.process_request()
@@ -52,6 +53,7 @@ Here's what this really does:
 
 * We have defined a response function (a handler) - ``update_news``
 * We have initialized Sijax with the POST data, so that it can inspect it and determine if the current request is meant to be handled by Sijax
+* We have told Sijax where to which request URI to send the requests
 * We have registered the ``update_news`` function with Sijax. This tells Sijax that the function ``update_news`` is to be exposed for calling from the browser, with the public name of ``update_news``.
 * We've detected whether the request is meant to be handled by Sijax. If it is, we're telling Sijax to process the request.
 

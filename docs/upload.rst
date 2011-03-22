@@ -88,10 +88,10 @@ The UploadResponse object
 Functions registered via the Upload plugin using :func:`sijax.plugin.upload.register_upload_callback` receive
 an ``obj_response`` as their first argument, just like any other Sijax function.
 
-The difference is that the ``obj_response`` object is a from the :class:`sijax.plugin.upload.UploadResponse.UploadResponse` class,
-which provides a bit more functionality than the regular :class:`sijax.response.BaseResponse.BaseResponse` class.
+The difference is that the ``obj_response`` object is a from the :class:`sijax.plugin.upload.UploadResponse` class,
+which provides a bit more functionality than the regular :class:`sijax.response.BaseResponse` class.
 
-.. autoclass:: sijax.plugin.upload.UploadResponse.UploadResponse
+.. autoclass:: sijax.plugin.upload.UploadResponse
    :show-inheritance:
    :members:
    :noindex:

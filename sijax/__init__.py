@@ -3,10 +3,10 @@
 from . import response
 from . import exception
 from . import plugin
-from . import Sijax
+from .core import Sijax
 
 __title__ = 'sijax'
-__version__ = '0.1.11'
+__version__ = '0.2.0'
 __author__ = 'Slavi Pantaleev'
 __license__ = 'BSD'
 __copyright__ = 'Copyright 2011 Slavi Pantaleev'

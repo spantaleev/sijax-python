@@ -11,16 +11,14 @@ from contextlib import contextmanager
 sijax_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(sijax_path)
 
-from sijax.Sijax import Sijax
-from sijax.response.BaseResponse import BaseResponse
-from sijax.response.StreamingIframeResponse import StreamingIframeResponse
+from sijax import Sijax
+from sijax.response import BaseResponse, StreamingIframeResponse
 from sijax.exception import SijaxError
 
-from sijax.plugin.comet.CometResponse import CometResponse
-from sijax.plugin.comet import register_comet_callback, register_comet_object
+from sijax.plugin.comet import register_comet_callback, register_comet_object, \
+     CometResponse
 
-from sijax.plugin.upload.UploadResponse import UploadResponse
-from sijax.plugin.upload import register_upload_callback
+from sijax.plugin.upload import register_upload_callback, UploadResponse
 
 from sijax.helper import init_static_path
 
@@ -53,41 +51,41 @@ class SijaxMainTestCase(unittest.TestCase):
         cls = inst.__class__
 
         # no POST data specified.. this surely is a GET request
-        self.assertFalse(inst.is_sijax_request())
-        self.assertTrue(inst.get_request_function() is None)
+        self.assertFalse(inst.is_sijax_request)
+        self.assertTrue(inst.requested_function is None)
 
         # missing params that specify the function and args
         inst.set_data({"key": "value"})
-        self.assertFalse(inst.is_sijax_request())
-        self.assertTrue(inst.get_request_function() is None)
+        self.assertFalse(inst.is_sijax_request)
+        self.assertTrue(inst.requested_function is None)
         
         # missing args
         inst.set_data({cls.PARAM_REQUEST: "function"})
-        self.assertFalse(inst.is_sijax_request())
-        self.assertEqual(inst.get_request_function(), "function")
+        self.assertFalse(inst.is_sijax_request)
+        self.assertEqual(inst.requested_function, "function")
 
         # missing function name
         inst.set_data({cls.PARAM_ARGS: "[]"})
-        self.assertFalse(inst.is_sijax_request())
-        self.assertTrue(inst.get_request_function() is None)
-        self.assertEqual([], inst.get_request_args())
+        self.assertFalse(inst.is_sijax_request)
+        self.assertTrue(inst.requested_function is None)
+        self.assertEqual([], inst.request_args)
 
         inst.set_data({cls.PARAM_ARGS: '["invalid_json": here'})
-        self.assertFalse(inst.is_sijax_request())
-        self.assertTrue(inst.get_request_function() is None)
-        self.assertEqual([], inst.get_request_args())
+        self.assertFalse(inst.is_sijax_request)
+        self.assertTrue(inst.requested_function is None)
+        self.assertEqual([], inst.request_args)
 
         # this should be considered valid.. both params available
         # the arguments are json encoded
         inst.set_data({cls.PARAM_REQUEST: "function", cls.PARAM_ARGS: '["arg1", 5]'})
-        self.assertTrue(inst.is_sijax_request())
-        self.assertEqual("function", inst.get_request_function())
-        self.assertEqual(["arg1", 5], inst.get_request_args())
+        self.assertTrue(inst.is_sijax_request)
+        self.assertEqual("function", inst.requested_function)
+        self.assertEqual(["arg1", 5], inst.request_args)
 
         inst.set_data({cls.PARAM_REQUEST: "func2", cls.PARAM_ARGS: '[28, 5]'})
-        self.assertTrue(inst.is_sijax_request())
-        self.assertEqual("func2", inst.get_request_function())
-        self.assertEqual([28, 5], inst.get_request_args())
+        self.assertTrue(inst.is_sijax_request)
+        self.assertEqual("func2", inst.requested_function)
+        self.assertEqual([28, 5], inst.request_args)
 
     def test_events_have_default_handlers(self):
         inst = Sijax()
@@ -207,9 +205,9 @@ class SijaxMainTestCase(unittest.TestCase):
         inst = Sijax()
         cls = inst.__class__
         inst.set_data({cls.PARAM_REQUEST: "my_func", cls.PARAM_ARGS: '["arg1", 12]'})
-        self.assertTrue(inst.is_sijax_request())
-        self.assertEqual("my_func", inst.get_request_function())
-        self.assertEqual(["arg1", 12], inst.get_request_args())
+        self.assertTrue(inst.is_sijax_request)
+        self.assertEqual("my_func", inst.requested_function)
+        self.assertEqual(["arg1", 12], inst.request_args)
 
         response = inst.process_request()
         self.assertTrue(isinstance(response, StringType))
@@ -253,17 +251,17 @@ class SijaxMainTestCase(unittest.TestCase):
         inst.register_callback("my_func", my_callback)
 
         inst.set_data({cls.PARAM_REQUEST: "my_func", cls.PARAM_ARGS: '["arg1", 12]'})
-        self.assertTrue(inst.is_sijax_request())
-        self.assertEqual("my_func", inst.get_request_function())
-        self.assertEqual(["arg1", 12], inst.get_request_args())
+        self.assertTrue(inst.is_sijax_request)
+        self.assertEqual("my_func", inst.requested_function)
+        self.assertEqual(["arg1", 12], inst.request_args)
         response = inst.process_request()
         self.assertTrue(isinstance(response, StringType))
 
         # we should have succeeded now..
         # let's try to make the call invalid and observe the failure
         inst.set_data({cls.PARAM_REQUEST: "my_func", cls.PARAM_ARGS: '[]'})
-        self.assertEqual("my_func", inst.get_request_function())
-        self.assertEqual([], inst.get_request_args())
+        self.assertEqual("my_func", inst.requested_function)
+        self.assertEqual([], inst.request_args)
         response = inst.process_request()
         self.assertTrue(isinstance(response, StringType))
 
@@ -286,7 +284,7 @@ class SijaxMainTestCase(unittest.TestCase):
         inst = Sijax()
         cls = inst.__class__
         inst.set_data({cls.PARAM_REQUEST: "my_func", cls.PARAM_ARGS: '[]'})
-        self.assertTrue(inst.is_sijax_request())
+        self.assertTrue(inst.is_sijax_request)
 
         inst.register_callback("my_func", callback_one)
         inst.process_request()
@@ -317,15 +315,15 @@ class SijaxMainTestCase(unittest.TestCase):
         cls = inst.__class__
 
         inst.set_data({cls.PARAM_REQUEST: "callback_one", cls.PARAM_ARGS: '[]'})
-        self.assertTrue(inst.is_sijax_request())
+        self.assertTrue(inst.is_sijax_request)
         inst.process_request()
 
         inst.set_data({cls.PARAM_REQUEST: "callback_two", cls.PARAM_ARGS: '[]'})
-        self.assertTrue(inst.is_sijax_request())
+        self.assertTrue(inst.is_sijax_request)
         inst.process_request()
 
         inst.set_data({cls.PARAM_REQUEST: "callback_three", cls.PARAM_ARGS: '[]'})
-        self.assertTrue(inst.is_sijax_request())
+        self.assertTrue(inst.is_sijax_request)
         inst.process_request()
 
         self.assertEqual(["one", "two", "three"], call_history)
@@ -345,11 +343,11 @@ class SijaxMainTestCase(unittest.TestCase):
         cls = inst.__class__
 
         inst.set_data({cls.PARAM_REQUEST: "callback_one", cls.PARAM_ARGS: '[]'})
-        self.assertTrue(inst.is_sijax_request())
+        self.assertTrue(inst.is_sijax_request)
         inst.process_request()
 
         inst.set_data({cls.PARAM_REQUEST: "callback_two", cls.PARAM_ARGS: '[]'})
-        self.assertTrue(inst.is_sijax_request())
+        self.assertTrue(inst.is_sijax_request)
         inst.process_request()
 
         self.assertEqual(["one", "two"], call_history)
@@ -379,11 +377,11 @@ class SijaxMainTestCase(unittest.TestCase):
         inst.register_callback("my_func_custom", my_custom_callback, **params_custom)
 
         inst.set_data({cls.PARAM_REQUEST: "my_func", cls.PARAM_ARGS: '[]'})
-        self.assertTrue(inst.is_sijax_request())
+        self.assertTrue(inst.is_sijax_request)
         inst.process_request()
 
         inst.set_data({cls.PARAM_REQUEST: "my_func_custom", cls.PARAM_ARGS: '[]'})
-        self.assertTrue(inst.is_sijax_request())
+        self.assertTrue(inst.is_sijax_request)
         inst.process_request()
 
         self.assertEqual(["regular", "custom"], call_history)
@@ -406,12 +404,12 @@ class SijaxMainTestCase(unittest.TestCase):
 
         inst.register_callback("callback", callback, args_extra=("one", "two"))
         inst.set_data({cls.PARAM_REQUEST: "callback", cls.PARAM_ARGS: '["regular"]'})
-        self.assertTrue(inst.is_sijax_request())
+        self.assertTrue(inst.is_sijax_request)
         inst.process_request()
 
         inst.register_callback("callback", callback_basic)
         inst.set_data({cls.PARAM_REQUEST: "callback", cls.PARAM_ARGS: '["reg2"]'})
-        self.assertTrue(inst.is_sijax_request())
+        self.assertTrue(inst.is_sijax_request)
         inst.process_request()
 
         call_history_expected = ["one", "two", "regular", "reg2"]
@@ -481,7 +479,8 @@ class SijaxMainTestCase(unittest.TestCase):
             except SijaxError, ex:
                 pass
 
-            self.assertEqual(should_succeed, success, "Failure for %s" % repr(args_value))
+            self.assertEqual(should_succeed, success, "Failure for %s" %
+                             repr(args_value))
 
         try_call(None, True)
         try_call([], True)
@@ -681,7 +680,7 @@ class SijaxCometTestCase(unittest.TestCase):
         class CustomResponse(CometResponse): pass
 
         def process_request(inst):
-            self.assertTrue(inst.is_sijax_request())
+            self.assertTrue(inst.is_sijax_request)
             response = inst.process_request()
             self.assertTrue(isinstance(response, GeneratorType))
             # something needs to "move the generator forward" if we want
@@ -748,7 +747,7 @@ class SijaxUploadTestCase(unittest.TestCase):
         class CustomResponse(UploadResponse): pass
 
         def process_request(inst):
-            self.assertTrue(inst.is_sijax_request())
+            self.assertTrue(inst.is_sijax_request)
             response = inst.process_request()
             self.assertTrue(isinstance(response, GeneratorType))
             # something needs to "move the generator forward" if we want

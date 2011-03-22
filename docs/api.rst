@@ -4,7 +4,7 @@ API
 Sijax
 -----
 
-.. autoclass:: sijax.Sijax.Sijax
+.. autoclass:: sijax.Sijax
    :members:
 
 
@@ -13,14 +13,14 @@ Sijax
 BaseResponse
 ------------
 
-.. autoclass:: sijax.response.BaseResponse.BaseResponse
+.. autoclass:: sijax.response.BaseResponse
    :members:
 
 
 StreamingIframeResponse
 -----------------------
 
-.. autoclass:: sijax.response.StreamingIframeResponse.StreamingIframeResponse
+.. autoclass:: sijax.response.StreamingIframeResponse
    :show-inheritance:
    :members:
 
@@ -30,14 +30,19 @@ Helpers
 
 .. autofunction:: sijax.helper.init_static_path
 
+Exceptions
+----------
+
+.. autoclass:: sijax.exception.SijaxError
+   :members:
+
 
 Comet plugin
 ------------
 
 .. autofunction:: sijax.plugin.comet.register_comet_callback
 .. autofunction:: sijax.plugin.comet.register_comet_object
-.. autoclass:: sijax.plugin.comet.CometResponse.CometResponse
-   :show-inheritance:
+.. autoclass:: sijax.plugin.comet.CometResponse
    :members:
 
 Also refer to :ref:`clientside-sjxcomet-request` for a way of invoking the :doc:`comet` from the browser.
@@ -48,8 +53,7 @@ Upload plugin
 
 .. autofunction:: sijax.plugin.upload.register_upload_callback
 
-.. autoclass:: sijax.plugin.upload.UploadResponse.UploadResponse
-   :show-inheritance:
+.. autoclass:: sijax.plugin.upload.UploadResponse
    :members:
 
 

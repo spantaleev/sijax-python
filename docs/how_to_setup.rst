@@ -70,7 +70,7 @@ Javascript initialization code
 
 After the ``sijax.js`` file has been loaded, the browser initialization code needs to be executed.
 
-Sijax generates that javascript code dynamically (on every page request) using :func:`sijax.Sijax.Sijax.get_js`::
+Sijax generates that javascript code dynamically (on every page request) using :func:`sijax.Sijax.get_js`::
 
     javascript_code = sijax_instance.get_js()
 
@@ -132,7 +132,7 @@ Note on the response result
 to it as its first argument. Your handler function calls methods on that response object (like ``html()``, ``css()``, etc)
 which queue commands. When your handler function exits those queued commands are represented as JSON and returned as a string.
 This means that ``sijax_instance.process_request()`` returns **a string** (valid JSON) for normal handler functions that use the
-:class:`sijax.response.BaseResponse.BaseResponse` class (default).
+:class:`sijax.response.BaseResponse` class (default).
 
 If the :doc:`comet` or :doc:`upload` is used, it does something else though.
 Comet is implemented using an iframe and doesn't use XHR requests. The purpose of the Comet plugin is to allow you

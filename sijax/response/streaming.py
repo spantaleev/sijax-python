@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-    sijax.response.StreamingIframeResponse
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    sijax.response.streaming
+    ~~~~~~~~~~~~~~~~~~~~~~~~
 
     Provides a response class to be used when Sijax functions
     are invoked via an iframe, instead of XHR.
@@ -15,7 +15,7 @@
 """
 
 
-from .BaseResponse import BaseResponse
+from .base import BaseResponse
 from types import GeneratorType
 
 
@@ -127,12 +127,13 @@ class StreamingIframeResponse(BaseResponse):
                 yield self._flush()
 
     def _process_call_chain(self, call_chain):
-        """Executes all the callbacks in the chain for streaming response objects.
+        """Executes all the callbacks in the chain.
 
-        The difference from SijaxResponse._process_call_chain is that this
-        returns a generator instead of a string. This allows response functions
-        to flush the commands buffer whenever they need, instead of all at once
-        in the end.
+        The difference from
+        :meth:`sijax.response.BaseResponse._process_call_chain` is that this
+        returns a generator instead of a string.
+        This allows response functions to flush the commands buffer whenever
+        they need, instead of all at once in the end.
 
         :param call_chain: a list of two-tuples (callback, args list) to call
         """

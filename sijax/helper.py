@@ -11,11 +11,12 @@
 """
 
 
-from ..exception import SijaxError
+from .exception import SijaxError
 
 
-# try to load the best simplejson implementation available.  If JSON
-# is not installed, we add a failing class.
+# Try to load the best json implementation,
+# If json support is not available, we'll add
+# an object that raises a RuntimeError when used
 json = None
 try:
     import simplejson as json
@@ -28,35 +29,41 @@ except ImportError:
             from django.utils import simplejson as json
         except ImportError:
             pass
-
 if json is None:
-    raise SijaxError("You need a JSON library to use Sijax!")
+    class _JSON(object):
+        def __getattr__(self, name):
+            raise RuntimeError('You need a JSON library to use Sijax!')
+    json = _JSON()
 
 
 def init_static_path(static_path):
-    """Mirrors the important static files from the package into a directory of your choice.
+    """Mirrors the important static files from the package
+    into a directory of your choice.
 
-    It may be a good idea to run this for your static path whenever Sijax gets upgraded, so that
-    your files will be kept in sync.
+    It may be a good idea to run this for your static path whenever
+    Sijax gets upgraded, so that your files will be kept in sync.
 
     The directory that you provide needs to be empty (if it exists),
     or to have been previously used by Sijax using this same function.
-    If the provided directory contains some other files, Sijax will refuse to use it.
+    If the provided directory contains some other files,
+    Sijax will refuse to use it.
 
     The following files will be made available in the specified directory:
 
     * ``sijax.js`` - the core javascript file used by Sijax
-    * ``json2.js`` - JSON library that can be loaded for browsers that don't support native JSON (like IE <= 7)
+    * ``json2.js`` - JSON library that can be loaded for browsers
+                     that don't support native JSON (like IE <= 7)
     * ``sijax_comet.js`` - the javascript file used by the Comet plugin
     * ``sijax_upload.js`` - the javascript file used by the Upload plugin
-    * ``sijax_version`` - a system file that keeps track of versioning - do not touch it
+    * ``sijax_version`` - a system file that keeps track of versioning -
+                          do not touch this file
     """
 
     import os, shutil, errno
     import sijax
 
     def mkdir_p(path):
-        """NOOP if the directory exists. If not, it creates the whole directory tree."""
+        """Creates the whole directory tree (recursively), if it's missing."""
         try:
             os.makedirs(path)
         except OSError, exc:
@@ -75,7 +82,8 @@ def init_static_path(static_path):
         if files_count != 0:
             # non-empty path with a missing version file
             # this looks like a user directory - we'd better not touch anything!
-            raise SijaxError('%s already contains files - Sijax refuses to write there!' % static_path)
+            raise SijaxError('%s already contains files - refusing to write there!' %
+                             static_path)
 
     if version == sijax.__version__:
         return

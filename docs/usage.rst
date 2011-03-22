@@ -7,16 +7,16 @@ The **main idea** that Sijax is based on is **registering/exposing** functions a
 
 The functions that you expose can be called *Response* functions or *Handler* functions.
 
-All functions receive a response object (as their first argument) which is an instance of :class:`sijax.response.BaseResponse.BaseResponse`.
+All functions receive a response object (as their first argument) which is an instance of :class:`sijax.response.BaseResponse`.
 The Response function should use that argument to feed data back to the browser. You do that by calling one of the many methods that it provides.
 
 
 Registering functions
 ---------------------
 
-To register/expose a function you use the :meth:`sijax.Sijax.Sijax.register_callback` method:
+To register/expose a function you use the :meth:`sijax.Sijax.register_callback` method:
 
-.. automethod:: sijax.Sijax.Sijax.register_callback
+.. automethod:: sijax.Sijax.register_callback
    :noindex:
 
 Let's take a look at an example function and a way of calling it::
@@ -26,12 +26,13 @@ Let's take a look at an example function and a way of calling it::
             update_news_rating(news_id, stars_count)
             rating = get_new_rating(news_id)
 
-            obj_response.html("#news_rating", rating)
-            obj_response.alert("Thanks for voting with %d stars" % stars_count)
+            obj_response.html('#news_rating', rating)
+            obj_response.alert('Thanks for voting with %d stars' % stars_count)
 
         instance = Sijax()
         instance.set_data(POST_DATA_HERE)
-        instance.register_callback("rate", rate_news_item)
+        instance.set_request_uri(URI_OF_THE_CURRENT_PAGE)
+        instance.register_callback('rate', rate_news_item)
         if instance.is_sijax_request():
             return instance.process_request()
 
@@ -66,9 +67,9 @@ As pages grow more and more interactive (and complex) you'll want to be able to 
 
 An easy way to do that is to group related functions inside a class (or a Python module) and tell Sijax that you want to register the whole thing (the whole object).
 
-You do that using :meth:`sijax.Sijax.Sijax.register_object`:
+You do that using :meth:`sijax.Sijax.register_object`:
 
-.. automethod:: sijax.Sijax.Sijax.register_object
+.. automethod:: sijax.Sijax.register_object
    :noindex:
 
 
@@ -86,11 +87,15 @@ Here's an example which registers 2 functions with a single call::
 
     sijax_instance.register_object(Handler)
 
+This is equivalent to registering both functions manually::
+
+    sijax_instance.register_callback('say_hi', Handler.say_hi)
+    sijax_instance.register_callback('say_hello', Handler.say_hello)
+
 You can also use a class instance and register all of the object's methods the same way.
 You only need to remove the ``@staticmethod`` decorator and do the actual registering like this::
 
     sijax_instance.register_object(Handler())
-
 
 
 Available Response methods
@@ -102,21 +107,21 @@ To see the full list of available response methods (like ``alert()`` above), tak
 Extending the Response class
 ----------------------------
 
-If you want to extend the functionality provided by :class:`sijax.response.BaseResponse.BaseResponse` you can create your own subclass
+If you want to extend the functionality provided by :class:`sijax.response.BaseResponse` you can create your own subclass
 and tell Sijax to use it when creating the ``obj_response`` object for a particular function.
 
 Here's an example of a function, which uses a custom response class::
 
     # Custom Response class, which adds a new shortcut method
-    class MyResponse(sijax.response.BaseResponse.BaseResponse):
+    class MyResponse(sijax.response.BaseResponse):
         def say_hello_to(name):
-            self.alert("Hello %s" % name)
+            self.alert('Hello %s' % name)
 
     # The handler function which would use our custom Response class
     def say_hello_handler(obj_response, name):
         obj_response.say_hello_to(name)
 
-    sijax_instance.register_callback("say_hello", say_hello_handler, response_class=MyResponse)
+    sijax_instance.register_callback('say_hello', say_hello_handler, response_class=MyResponse)
 
 
 .. _args-extra:
@@ -135,7 +140,7 @@ Here's an example::
     # The handler is defined outside the other function
     # so it wouldn't normally be able to access its data
     def say_hello_handler(obj_response, hello_from, hello_to):
-        obj_response.alert("Hello from %s to %s" % (hello_from, hello_to))
+        obj_response.alert('Hello from %s to %s' % (hello_from, hello_to))
 
     # Let's assume that this is the entry point for all page requests
     def index():
@@ -143,7 +148,7 @@ Here's an example::
         
         sijax_instance = Sijax()
         sijax_instance.set_data(POST_DICTIONARY_HERE)
-        sijax_instance.register_callback("say_hello", say_hello_handler, args_extra=[hello_from])
+        sijax_instance.register_callback('say_hello', say_hello_handler, args_extra=[hello_from])
         if sijax_instance.is_sijax_request():
             return sijax_instance.proces_request()
 
@@ -152,7 +157,7 @@ Here's an example::
 
 You can do extra arguments passing with mass registration too::
 
-    sijax_instance.register_object(SijaxHandler, arsg_extra=["additional", "arguments", "here"])
+    sijax_instance.register_object(SijaxHandler, arsg_extra=['additional', 'arguments', 'here'])
 
 
 Events
@@ -161,20 +166,20 @@ Events
 There are certain events that you may be interested in.
 Sijax can invoke a handler function for each event that you've "subscribed" to.
 
-The following events are available as seen in the :class:`sijax.Sijax.Sijax` class:
+The following events are available as seen in the :class:`sijax.Sijax` class:
 
-.. autoattribute:: sijax.Sijax.Sijax.EVENT_BEFORE_PROCESSING
+.. autoattribute:: sijax.Sijax.EVENT_BEFORE_PROCESSING
    :noindex:
-.. autoattribute:: sijax.Sijax.Sijax.EVENT_AFTER_PROCESSING
+.. autoattribute:: sijax.Sijax.EVENT_AFTER_PROCESSING
    :noindex:
-.. autoattribute:: sijax.Sijax.Sijax.EVENT_INVALID_REQUEST
+.. autoattribute:: sijax.Sijax.EVENT_INVALID_REQUEST
    :noindex:
-.. autoattribute:: sijax.Sijax.Sijax.EVENT_INVALID_CALL
+.. autoattribute:: sijax.Sijax.EVENT_INVALID_CALL
    :noindex:
 
-Events are registered using :meth:`sijax.Sijax.Sijax.register_event`:
+Events are registered using :meth:`sijax.Sijax.register_event`:
 
-.. automethod:: sijax.Sijax.Sijax.register_event
+.. automethod:: sijax.Sijax.register_event
    :noindex:
 
 Here are some examples::

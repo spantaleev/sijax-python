@@ -37,7 +37,7 @@ Here's an example::
 
 ``yield`` tells Sijax to flush the commands we've queued so far in the response object (``obj_response``).
 If your Comet function doesn't ``yield`` at all, its response will be returned all at once (in the end),
-much like a normal request function (that uses :class:`sijax.response.BaseResponse.BaseResponse`).
+much like a normal request function (that uses :class:`sijax.response.BaseResponse`).
 
 Let's see how we can register a handler function as a Comet function.
 
@@ -84,8 +84,8 @@ The CometResponse object
 ------------------------
 
 The response object (``obj_response``) for functions registered with Comet is an instance of
-:class:`sijax.plugin.comet.CometResponse.CometResponse`, which doesn't provide any more functionality than the default
-:class:`sijax.response.BaseResponse.BaseResponse` class used for regular functions, apart from the internal changes,
+:class:`sijax.plugin.comet.CometResponse`, which doesn't provide any more functionality than the default
+:class:`sijax.response.BaseResponse` class used for regular functions, apart from the internal changes,
 which make streaming possible.
 
 

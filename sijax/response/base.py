@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-    sijax.response.BaseResponse
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    sijax.response.base
+    ~~~~~~~~~~~~~~~~~~~
 
     Provides the BaseResponse class, which is the base class
     used to create response objects for Sijax functions.
@@ -39,7 +39,8 @@ class BaseResponse(object):
         We don't need to do that for regular sijax responses,
         but certain plugins may need to do that.
 
-        :param sijax_instance: the Sijax instance object that created this response
+        :param sijax_instance: the Sijax instance object
+                               that created this response
         :param request_args: the request arguments that the sijax function
                              was invoked with
         """
@@ -50,8 +51,8 @@ class BaseResponse(object):
     def _get_request_args(self):
         """Returns the arguments list to pass to callbacks.
 
-        This class doesn't manipulate them, so it returns the original call arguments,
-        but other classes can override them however they need.
+        This class doesn't manipulate them, so it returns the original
+        call arguments, but other classes can override them however they need.
         """
         return self._request_args
         
@@ -78,25 +79,28 @@ class BaseResponse(object):
         return self._add_command(self.__class__.COMMAND_ALERT, params)
     
     def _html(self, selector, html, set_type):
-        params = {"selector": selector, "html": html, "setType": set_type}
+        params = {'selector': selector, 'html': html, 'setType': set_type}
         return self._add_command(self.__class__.COMMAND_HTML, params)
    
     def html(self, selector, html):
-        """
-        Adds the given html to the element(s) specified by the jQuery selector,
-        replacing any html content inside it.
+        """Adds the given html to all elements matching the jQuery selector,
+        replacing any html content inside them.
 
         Scripts inside the html block are also executed.
+
+        Example::
+
+            obj_response.html('#element', '<strong>Hey!</strong>')
 
         :param selector: the jQuery selector for which we'll replace the html
         :param html: the html text
         """
-        return self._html(selector, html, "replace")
+        return self._html(selector, html, 'replace')
 
     def html_append(self, selector, html):
-        """Appends the given html to the element(s) specified by the jQuery selector.
+        """Appends the given html to all elements matching the jQuery selector.
 
-        Same as jQuery's: $(selector).html(value);
+        Same as jQuery's: ``$(selector).html(value)``
 
         Scripts inside the html block are also executed.
 
@@ -106,17 +110,22 @@ class BaseResponse(object):
         return self._html(selector, html, "append")
    
     def html_prepend(self, selector, html):
-        """Prepends the given html to the element(s) specified by the jQuery selector.
+        """Prepends the given html to all elements
+        matching the jQuery selector.
 
         Scripts inside the html block are also executed.
 
         :param selector: the jQuery selector to prepend html to
         :param html: the html text
         """
-        return self._html(selector, html, "prepend")
+        return self._html(selector, html, 'prepend')
     
     def script(self, js):
         """Executes the given javascript code.
+
+        Example::
+
+            obj_response.html("alert('Javascript code!');")
 
         Note that the given javascript code is eval-ed inside a
         Sijax helper function, so it's not touching the global namespace,
@@ -126,12 +135,17 @@ class BaseResponse(object):
         return self._add_command(self.__class__.COMMAND_SCRIPT, params)
 
     def css(self, selector, property_name, value):
-        """Assigns a new style property value to all elements matching the jQuery selector.
+        """Assigns a style property value to all elements
+        matching the jQuery selector.
 
         Finds an element by the specified selector and changes
         the specified css (style) property to the given value.
 
-        Same as jQuery's $(selector).css('property', 'value');
+        Same as jQuery's ``$(selector).css('property', 'value')``
+
+        Example::
+
+            obj_response.css('#element', 'backgroundColor', 'red')
 
         Note that this can only change a single property at once.
         It doesn't support jQuery's mass change which uses a
@@ -141,41 +155,49 @@ class BaseResponse(object):
         :param property_name: the name of the style property
         :param value: the new value to assign to the property
         """
-        params = {"selector": selector, "key": property_name, "value": value}
+        params = {'selector': selector, 'key': property_name, 'value': value}
         return self._add_command(self.__class__.COMMAND_CSS, params)
 
     def _attr(self, selector, property_name, value, set_type):
         params = {
-            "selector": selector, "key": property_name,
-            "value": value, "setType": set_type
+            'selector': selector, 'key': property_name,
+            'value': value, 'setType': set_type
         }
         return self._add_command(self.__class__.COMMAND_ATTR, params)
 
     def attr(self, selector, property_name, value):
-        """Assigns an attribute value to all elements matching the jQuery selector.
+        """Assigns an attribute value to all elements
+        matching the jQuery selector.
 
         Finds an element by the specified selector and changes
         the specified property to the given value.
-        Same as jQuery's $(selector).attr('property', 'value');
+        Same as jQuery's ``$(selector).attr('property', 'value')``
+
+        Example::
+
+            obj_response.attr('#element', 'width', '500px')
+            obj_response.attr('#element', 'disabled', true)
 
         :param selector: the jQuery selector to invoke attr() on
         :param property_name: the name of the property
         :param value: the new value to assign to the property
         """
-        return self._attr(selector, property_name, value, "replace")
+        return self._attr(selector, property_name, value, 'replace')
     
     def attr_append(self, selector, property_name, value):
-        """Same as :meth:`attr`, but appends instead of assigning a new value."""
-        return self._attr(selector, property_name, value, "append")
+        """Same as :meth:`attr`,
+        but appends instead of assigning a new value."""
+        return self._attr(selector, property_name, value, 'append')
 
     def attr_prepend(self, selector, property_name, value):
-        """Same as :meth:`attr`, but prepends instead of assigning a new value."""
-        return self._attr(selector, property_name, value, "prepend")
+        """Same as :meth:`attr`,
+        but prepends instead of assigning a new value."""
+        return self._attr(selector, property_name, value, 'prepend')
     
     def remove(self, selector):
-        """Removes all elements from the DOM that match the selector.
+        """Removes all elements from the DOM that match the jQuery selector.
 
-        Same as jQuery's: $(selector).remove();
+        Same as jQuery's: ``$(selector).remove()``
         """
         params = {self.__class__.COMMAND_REMOVE: selector}
         return self._add_command(self.__class__.COMMAND_REMOVE, params)
@@ -183,10 +205,16 @@ class BaseResponse(object):
     
     def redirect(self, uri):
         """Redirects the browser to the given URI."""
-        return self.script("window.location = %s;" % json.dumps(uri))
+        return self.script('window.location = %s;' % json.dumps(uri))
     
     def call(self, js_func_name, func_params=None):
         """Calls the given javascript function with the given arguments list.
+
+        Example::
+
+            obj_response.call('alert', ['Message'])
+            # which is equivalent to:
+            obj_response.alert('Message')
 
         :param js_func_name: the name of the javascript function to call
         :param func_params: a list of arguments to call the function with
@@ -194,10 +222,15 @@ class BaseResponse(object):
         if func_params is None:
             func_params = []
 
-        if not isinstance(func_params, list) and not isinstance(func_params, tuple):
-            raise SijaxError("call() expects a list, a tuple or None for the args list")
+        if (not isinstance(func_params, list) and
+            not isinstance(func_params, tuple)):
+            raise SijaxError('call() expects a list, a tuple or '
+                             'None for the args list')
 
-        params = {self.__class__.COMMAND_CALL: js_func_name, "params": func_params}
+        params = {
+            self.__class__.COMMAND_CALL: js_func_name,
+            'params': func_params
+        }
         return self._add_command(self.__class__.COMMAND_CALL, params)
     
     def _get_json(self):
@@ -226,18 +259,21 @@ class BaseResponse(object):
             event_invalid_call = self._sijax.__class__.EVENT_INVALID_CALL
             self._sijax.get_event(event_invalid_call)(self, callback)
         else:
-            # We usually don't expect a return value, but if we get a generator
-            # it means that our regular function was used as a streaming function -
-            # a mistake which could happen due to incorrect function registration
+            # We usually don't expect a return value,
+            # but if we get a generator, it may mean that our regular function
+            # was used like a streaming function (yield).
+            # This is a a mistake which could happen due to incorrect
+            # function registration.
             if isinstance(result, GeneratorType):
-                raise SijaxError('Flushing/Yielding/Streaming is not supported for regular functions!')
+                raise SijaxError('Flushing/Yielding/Streaming is not '
+                                 'supported for regular functions!')
 
     def _process_call_chain(self, call_chain):
         """Executes all the callbacks in the chain for this response object.
 
         Each callback in the chain adds commands to the buffer.
-        When all the callbacks have been executed, the buffer contains a list of commands
-        that we need to pass to the browser (in order).
+        When all the callbacks have been executed, the buffer would contain
+        a list of commands that we need to pass to the browser (in order).
 
         The result of this is a JSON string to pass to the browser.
 
