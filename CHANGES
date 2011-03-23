@@ -1,0 +1,31 @@
+Sijax Changelog
+===============
+
+Version 0.2.0
+-------------
+
+Huge reorganization of modules, which lead to minor API
+differences.
+
+- :class:`sijax.Sijax.Sijax` is now :class:`sijax.Sijax`
+- :class:`sijax.response.BaseResponse.BaseResponse`
+  is now :class:`sijax.response.BaseResponse`
+- :class:`sijax.response.StreamingIframeResponse.StreamingIframeResponse`
+  is now :class:`sijax.response.StreamingIframeResponse`
+- :class:`sijax.plugin.comet.CometResponse.CometResponse`
+  is now :class:`sijax.plugin.comet.CometResponse`
+- :class:`sijax.plugin.upload.UploadResponse.UploadResponse`
+  is now :class:`sijax.plugin.upload.UploadResponse`
+- :meth:`sijax.Sijax.Sijax.is_sijax_request()` is now
+  :attr:`sijax.Sijax.is_sijax_request`
+- :meth:`sijax.Sijax.Sijax.get_request_function()` is now
+  :attr:`sijax.Sijax.requested_function`
+- :meth:`sijax.Sijax.Sijax.get_request_args()` is now
+  :attr:`sijax.Sijax.request_args`
+
+Documentation also got completely reviewed and many improvements were made.
+
+Version 0.1.x
+-------------
+
+Initial release.
