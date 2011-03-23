@@ -18,7 +18,7 @@ from types import GeneratorType
 
 
 class BaseResponse(object):
-    """The response class is the way for Sijax functions (handlers) to
+    """The response class is the way by which Sijax functions (handlers)
     pass information back to the browser. They do this by calling
     various methods, which queue commands until they're sent to the browser.
     """
@@ -69,12 +69,23 @@ class BaseResponse(object):
         """Clears the commands buffer.
 
         All the commands added by other methods will be removed.
+
+        Example::
+
+            obj_response.alert('Some alert!')
+            obj_response.clear_commands()
+            # The alert() above got removed from the commands queue
         """
         self._commands = []
         return self
 
     def alert(self, message):
-        """Sends a window.alert command to the browser."""
+        """Sends a ``window.alert`` command to the browser.
+
+        Example that shows a message box::
+
+            obj_response.alert('Alert message!')
+        """
         params = {self.__class__.COMMAND_ALERT: message}
         return self._add_command(self.__class__.COMMAND_ALERT, params)
     
@@ -83,12 +94,14 @@ class BaseResponse(object):
         return self._add_command(self.__class__.COMMAND_HTML, params)
    
     def html(self, selector, html):
-        """Adds the given html to all elements matching the jQuery selector,
-        replacing any html content inside them.
+        """Assigns the given html value to all elements
+        matching the jQuery selector.
 
         Scripts inside the html block are also executed.
 
-        Example::
+        Same as jQuery's: ``$(selector).html(value)``
+
+        Example which sets a new html value for an element::
 
             obj_response.html('#element', '<strong>Hey!</strong>')
 
@@ -98,25 +111,14 @@ class BaseResponse(object):
         return self._html(selector, html, 'replace')
 
     def html_append(self, selector, html):
-        """Appends the given html to all elements matching the jQuery selector.
-
-        Same as jQuery's: ``$(selector).html(value)``
-
-        Scripts inside the html block are also executed.
-
-        :param selector: the jQuery selector to append html to
-        :param html: the html text
+        """Same as :meth:`sijax.response.BaseResponse.html`,
+        but appends instead of assigning a new value.
         """
         return self._html(selector, html, "append")
    
     def html_prepend(self, selector, html):
-        """Prepends the given html to all elements
-        matching the jQuery selector.
-
-        Scripts inside the html block are also executed.
-
-        :param selector: the jQuery selector to prepend html to
-        :param html: the html text
+        """Same as :meth:`sijax.response.BaseResponse.html`,
+        but prepends instead of assigning a new value.
         """
         return self._html(selector, html, 'prepend')
     
@@ -128,8 +130,8 @@ class BaseResponse(object):
             obj_response.html("alert('Javascript code!');")
 
         Note that the given javascript code is eval-ed inside a
-        Sijax helper function, so it's not touching the global namespace,
-        unless you explicitly do it.
+        Sijax helper function in the browser, so it's not touching
+        the global namespace, unless you explicitly do it.
         """
         params = {self.__class__.COMMAND_SCRIPT: js}
         return self._add_command(self.__class__.COMMAND_SCRIPT, params)
@@ -138,12 +140,9 @@ class BaseResponse(object):
         """Assigns a style property value to all elements
         matching the jQuery selector.
 
-        Finds an element by the specified selector and changes
-        the specified css (style) property to the given value.
-
         Same as jQuery's ``$(selector).css('property', 'value')``
 
-        Example::
+        Example which changes the background color of an element::
 
             obj_response.css('#element', 'backgroundColor', 'red')
 
@@ -169,11 +168,9 @@ class BaseResponse(object):
         """Assigns an attribute value to all elements
         matching the jQuery selector.
 
-        Finds an element by the specified selector and changes
-        the specified property to the given value.
         Same as jQuery's ``$(selector).attr('property', 'value')``
 
-        Example::
+        Example which changes 2 attributes of a given element::
 
             obj_response.attr('#element', 'width', '500px')
             obj_response.attr('#element', 'disabled', true)
@@ -185,17 +182,21 @@ class BaseResponse(object):
         return self._attr(selector, property_name, value, 'replace')
     
     def attr_append(self, selector, property_name, value):
-        """Same as :meth:`attr`,
+        """Same as :meth:`sijax.response.BaseResponse.attr`,
         but appends instead of assigning a new value."""
         return self._attr(selector, property_name, value, 'append')
 
     def attr_prepend(self, selector, property_name, value):
-        """Same as :meth:`attr`,
+        """Same as :meth:`sijax.response.BaseResponse.attr`,
         but prepends instead of assigning a new value."""
         return self._attr(selector, property_name, value, 'prepend')
     
     def remove(self, selector):
-        """Removes all elements from the DOM that match the jQuery selector.
+        """Removes all elements that match the jQuery selector from the DOM.
+
+        Example which removes all DIV elements from the page::
+
+            obj_response.remove('div')
 
         Same as jQuery's: ``$(selector).remove()``
         """
@@ -204,17 +205,21 @@ class BaseResponse(object):
 
     
     def redirect(self, uri):
-        """Redirects the browser to the given URI."""
+        """Redirects the browser to the given URI.
+
+        Example::
+
+            obj_response.redirect('http://example.com/')
+
+        """
         return self.script('window.location = %s;' % json.dumps(uri))
     
     def call(self, js_func_name, func_params=None):
         """Calls the given javascript function with the given arguments list.
 
-        Example::
+        Example which calls the browser's ``alert()`` function::
 
             obj_response.call('alert', ['Message'])
-            # which is equivalent to:
-            obj_response.alert('Message')
 
         :param js_func_name: the name of the javascript function to call
         :param func_params: a list of arguments to call the function with

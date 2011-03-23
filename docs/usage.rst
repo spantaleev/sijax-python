@@ -3,11 +3,11 @@
 Using Sijax
 ===========
 
-The **main idea** that Sijax is based on is **registering/exposing** functions and easily **calling** those functions from the browser.
+The **main idea** behind Sijax is **registering/exposing** functions on the server-side and easily **calling** those functions from the browser.
 
-The functions that you expose can be called *Response* functions or *Handler* functions.
+The functions that you expose can be referred to as *Response* functions or *Handler* functions.
 
-All functions receive a response object (as their first argument) which is an instance of :class:`sijax.response.BaseResponse`.
+All functions receive a response object as their first argument, which is an instance of :class:`sijax.response.BaseResponse`.
 The Response function should use that argument to feed data back to the browser. You do that by calling one of the many methods that it provides.
 
 
@@ -33,8 +33,10 @@ Let's take a look at an example function and a way of calling it::
         instance.set_data(POST_DATA_HERE)
         instance.set_request_uri(URI_OF_THE_CURRENT_PAGE)
         instance.register_callback('rate', rate_news_item)
-        if instance.is_sijax_request():
+        if instance.is_sijax_request:
             return instance.process_request()
+
+        return render_news_page()
 
 Note that we're registering the ``rate_news_item`` function with the name of ``rate``.
 The public name of the function is the one that would be used in the browser to call it.
@@ -49,8 +51,8 @@ If we want to call this function now, we can just do::
 
 The first argument that ``Sijax.request()`` accepts in the browser is the public name of the function to call.
 The second argument is an optional array/list of arguments to pass to the Python function.
-This ``Sijax.request()`` call rates the news item (with id of 324) with 4 stars.
-To learn more on ``Sijax.request()``, see :ref:`clientside-sijax-request`.
+This ``Sijax.request()`` call rates the news item (with an id of 324) with 4 stars.
+To learn more on invoking functions using ``Sijax.request()``, see :ref:`clientside-sijax-request`.
 
 Sijax will update the DOM element which matches the jQuery selector ``#news_rating`` with the new rating value.
 It would then show an alert message to the user.
@@ -149,7 +151,7 @@ Here's an example::
         sijax_instance = Sijax()
         sijax_instance.set_data(POST_DICTIONARY_HERE)
         sijax_instance.register_callback('say_hello', say_hello_handler, args_extra=[hello_from])
-        if sijax_instance.is_sijax_request():
+        if sijax_instance.is_sijax_request:
             return sijax_instance.proces_request()
 
         # normal page request (not Sijax)

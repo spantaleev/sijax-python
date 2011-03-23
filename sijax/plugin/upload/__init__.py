@@ -38,11 +38,11 @@ def func_name_by_form_id(form_id):
 def register_upload_callback(sijax_instance, form_id, callback, **options):
     """Helps you easily register Upload functions with Sijax.
     
-    We suggest that the `args_extra` options is passed here, so that the
-    response function would receive the files object or anything else it might be
-    needing to manipulate file uploads.
-    By using `args_extra` you could change the response function's
-    default header from::
+    We recommend the ``args_extra`` option to be used here, so that the
+    response function would receive the files object or
+    anything else it might be needing to manipulate file uploads.
+    By using ``args_extra`` you could change the response function's
+    default signature from::
 
         def upload_handler(obj_response, form_values)
 
@@ -51,6 +51,8 @@ def register_upload_callback(sijax_instance, form_id, callback, **options):
         def upload_handler(obj_response, files, form_values)
 
     where the args_extra=[files] option was passed during registering.
+    To learn more on how the ``args_extra`` option works,
+    refer to :meth:`sijax.Sijax.register_callback`.
 
     It's very important to keep in mind that unlike the regular
     :meth:`sijax.Sijax.register_callback` function, this one
@@ -77,7 +79,7 @@ def register_upload_callback(sijax_instance, form_id, callback, **options):
 
 
 class UploadResponse(StreamingIframeResponse):
-    """Class to use for Upload handler functions,
+    """Class used for Upload handler functions,
     instead of the :class:`sijax.response.BaseResponse` class.
 
     This class extends :class:`sijax.response.BaseResponse` and

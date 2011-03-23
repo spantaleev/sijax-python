@@ -28,10 +28,12 @@ class Sijax(object):
         instance.register_callback('function_name', some_function)
 
     Sijax needs the POST parameters for the current request, to determine
-    whether the request is meant to be handled by Sijax.
+    whether the request is meant to be handled by Sijax or by your regular
+    page loading logic.
 
-    Sijax needs a request URI to send ajax requests to. This is usually
-    the current request URI, but another URI can also be used.
+    Sijax needs a request URI to tell the client where to
+    send the ajax requests.
+    This is usually the current request URI, but another URI can also be used.
 
     Functions that are registered (using :meth:`sijax.Sijax.register_callback`
     or :meth:`sijax.Sijax.register_object`) are the only functions exposed to the
@@ -226,7 +228,8 @@ class Sijax(object):
     
     @property
     def is_sijax_request(self):
-        """Tells whether this page request looks like a valid request to Sijax.
+        """Tells whether this page request looks like
+        a valid request meant to be handled by Sijax.
 
         Even if this is a Sijax request, this doesn't mean it's a valid one.
         Refer to :meth:`sijax.Sijax.process_request` to see what happens when
@@ -271,10 +274,11 @@ class Sijax(object):
 
         Make sure that the current request is a Sijax request,
         using :attr:`sijax.Sijax.is_sijax_request` before calling this.
-        A :class:`sijax.exception.SijaxError` will be raised, if this method is called
-        for non-Sijax requests.
+        A :class:`sijax.exception.SijaxError` will be raised,
+        if this method is called for non-Sijax requests.
 
-        If the function that was called from the browser is not registered,
+        If the function that was called from the browser is not
+        registered (the function is unknown to Sijax),
         the :attr:`sijax.Sijax.EVENT_INVALID_REQUEST` event handler will
         be called instead.
 
@@ -338,14 +342,11 @@ class Sijax(object):
         # want responses to know anything about that.
         obj_response = response_class(self, args)
         call_args = args_extra + obj_response._get_request_args()
-        
-        event_before_processing = cls.EVENT_BEFORE_PROCESSING
-        event_after_processing = cls.EVENT_AFTER_PROCESSING
 
         call_chain = [
-            (self._events[event_before_processing], []),
+            (self._events[cls.EVENT_BEFORE_PROCESSING], []),
             (callback, call_args),
-            (self._events[event_after_processing], [])
+            (self._events[cls.EVENT_AFTER_PROCESSING], [])
         ]
         return obj_response._process_call_chain(call_chain)
 
@@ -395,7 +396,8 @@ class Sijax(object):
         return self
     
     def get_js(self):
-        """Returns the javascript needed to prepare the Sijax environment.
+        """Returns the javascript code needed to prepare the
+        Sijax environment in the browser.
 
         Note that the javascript code is unique and cannot be shared between
         different pages.
@@ -403,12 +405,10 @@ class Sijax(object):
 
         if self._request_uri is None:
             raise SijaxError('Trying to get the sijax js, '
-                             'but no request_uri is set!')
+                             'but no request_uri has been set!')
         
         js = 'Sijax.setRequestUri(%s);' % json.dumps(self._request_uri)
-
         if self._json_uri is not None:
             js += 'Sijax.setJsonUri(%s);' % json.dumps(self._json_uri) 
-
         return js
 

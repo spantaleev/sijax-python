@@ -5,7 +5,8 @@
     ~~~~~~~~~~~~~~~~~~~~~~~~
 
     Provides a response class to be used when Sijax functions
-    are invoked via an iframe, instead of XHR.
+    are invoked using a form submitted to an iframe,
+    instead of XHR (``jQuery.ajax``).
     The main difference from the BaseResponse class is that this one
     can do streaming, meaning it can flush the commands queue back to
     the browser at any time.
@@ -20,7 +21,10 @@ from types import GeneratorType
 
 
 class StreamingIframeResponse(BaseResponse):
-    """A response class used with iframe-calls and supporting streaming.
+    """A response class used with iframe-calls, that supports streaming.
+
+    This class extends :class:`sijax.response.BaseResponse` and
+    every available method from it works here too.
 
     This is used by plugins that use an iframe to perform the Sijax call,
     instead of doing a regular ajax request.

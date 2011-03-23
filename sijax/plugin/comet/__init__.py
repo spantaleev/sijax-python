@@ -64,7 +64,7 @@ def register_comet_object(sijax_instance, obj, **options):
         
 
 class CometResponse(StreamingIframeResponse):
-    """Class to use for Comet handler functions,
+    """Class used for Comet handler functions,
     instead of the :class:`sijax.response.BaseResponse` class.
 
     This class extends :class:`sijax.response.BaseResponse` and

@@ -21,7 +21,6 @@ StreamingIframeResponse
 -----------------------
 
 .. autoclass:: sijax.response.StreamingIframeResponse
-   :show-inheritance:
    :members:
 
 
@@ -101,7 +100,7 @@ Client side API functions - Sijax.getFormValues()
 You often need to submit forms without reloading the page. If you want to use Sijax for that,
 you would have to extract the fields from the form, create a dictionary and pass that to ``Sijax.request()`` (see :ref:`clientside-sijax-request`).
 
-Sijax provides a browser helper for that, called ``Sijax.getFormValues()`` which can extract all the fields from a form on the page and give you a dictionary.
+Sijax provides a browser helper for that called ``Sijax.getFormValues()`` which can extract all the fields from a form on the page and give you a dictionary.
 
 The signature of ``Sijax.getFormValues()`` is::
 
@@ -113,6 +112,7 @@ Here's some HTML markup and the result of ``Sijax.getFormValues()``::
 
     <form id="my_form">
         <input type="text" name="textbox" value="textbox 1" />
+        <input type="text" name="tbx[nested]" value="tbx 2" />
         <input type="text" name="textbox2" value="textbox 1" disabled="disabled" />
         <input type="text" value="textbox with no name" />
         <input type="checkbox" name="cbx" checked="checked" />
@@ -120,7 +120,14 @@ Here's some HTML markup and the result of ``Sijax.getFormValues()``::
 
     <script type="text/javascript">
         var values = Sijax.getFormValues('#my_form');
-        //values now contains: {"textbox": "textbox 1", "cbx": "on"}
+        /*
+        The values variable now contains:
+        {
+            "textbox": "textbox 1",
+            "tbx": {"nested": "tbx 2"},
+            "cbx": "on"
+        }
+        */
 
         Sijax.request('process_form', [values]);
     </script>
