@@ -249,6 +249,14 @@ class SijaxMainTestCase(unittest.TestCase):
         def my_callback_with_defaults(obj_response, arg1=138, arg2=15):
             call_history.append("defaults ok")
 
+        def my_callback_raising_TypeError(obj_response):
+            raise TypeError('this should be re-raised by Sijax')
+
+        def my_callback_raising_TypeError2(obj_response):
+            def inner():
+                raise TypeError('this should be re-raised by Sijax')
+            inner()
+
         def invalid_call(obj_response, failed_callback):
             self.assertTrue(isinstance(failed_callback, FunctionType))
             call_history.append("invalid %s" % failed_callback.__name__)
@@ -265,7 +273,7 @@ class SijaxMainTestCase(unittest.TestCase):
         response = inst.process_request()
         self.assertTrue(isinstance(response, StringType))
 
-        # we should have succeeded now..
+        # we should have succeeded until now..
         # let's try to make the call invalid and observe the failure
         inst.set_data({cls.PARAM_REQUEST: "my_func", cls.PARAM_ARGS: '[]'})
         self.assertEqual("my_func", inst.requested_function)
@@ -278,7 +286,24 @@ class SijaxMainTestCase(unittest.TestCase):
         response = inst.process_request()
         self.assertTrue(isinstance(response, StringType))
 
-        self.assertEqual(["call ok", "invalid my_callback", "defaults ok"], call_history)
+        # let's ensure that raising a TypeError from within a handler,
+        # is not mistaken for an invalid call (EVENT_INVALID_CALL),
+        # and re-raises the exception
+        inst.register_callback("my_func", my_callback_raising_TypeError)
+        try:
+            inst.process_request()
+        except TypeError:
+            call_history.append('TypeError')
+
+        inst.register_callback("my_func", my_callback_raising_TypeError2)
+        try:
+            inst.process_request()
+        except TypeError:
+            call_history.append('TypeError2')
+
+        expected = ['call ok', 'invalid my_callback', 'defaults ok',
+                    'TypeError', 'TypeError2']
+        self.assertEqual(expected, call_history)
 
     def test_new_callbacks_override_old_during_registering(self):
         call_history = []
@@ -675,6 +700,80 @@ class SijaxStreamingTestCase(unittest.TestCase):
             "before_new", "normal"
         ]
         self.assertEqual(call_history_expected, call_history)
+
+    def test_invalid_call_event_works(self):
+        from types import GeneratorType, FunctionType
+        call_history = []
+
+        def my_callback(obj_response, arg1, arg2):
+            self.assertTrue(isinstance(obj_response, StreamingIframeResponse))
+            call_history.append("call ok")
+
+        def my_callback_raising_TypeError(obj_response):
+            self.assertTrue(isinstance(obj_response, StreamingIframeResponse))
+            raise TypeError('this should be re-raised by Sijax')
+
+        def my_callback_raising_TypeError2(obj_response):
+            self.assertTrue(isinstance(obj_response, StreamingIframeResponse))
+            def inner():
+                raise TypeError('this should be re-raised by Sijax')
+            inner()
+
+        def invalid_call(obj_response, failed_callback):
+            self.assertTrue(isinstance(obj_response, StreamingIframeResponse))
+            self.assertTrue(isinstance(failed_callback, FunctionType))
+            call_history.append("invalid %s" % failed_callback.__name__)
+
+        def exhaust_generator(gen):
+            self.assertTrue(isinstance(gen, GeneratorType))
+            try:
+                while True:
+                    gen.next()
+            except StopIteration:
+                pass
+
+        inst = Sijax()
+        cls = inst.__class__
+        options = {cls.PARAM_RESPONSE_CLASS: StreamingIframeResponse}
+
+        inst.register_event(cls.EVENT_INVALID_CALL, invalid_call)
+        inst.register_callback("my_func", my_callback, **options)
+
+        inst.set_data({cls.PARAM_REQUEST: "my_func", cls.PARAM_ARGS: '["arg1", 12]'})
+        self.assertTrue(inst.is_sijax_request)
+        self.assertEqual("my_func", inst.requested_function)
+        self.assertEqual(["arg1", 12], inst.request_args)
+        response = inst.process_request()
+        exhaust_generator(response)
+
+        # we should have succeeded until now..
+        # let's try to make the call invalid and observe the failure
+        inst.set_data({cls.PARAM_REQUEST: "my_func", cls.PARAM_ARGS: '[]'})
+        self.assertEqual("my_func", inst.requested_function)
+        self.assertEqual([], inst.request_args)
+        response = inst.process_request()
+        exhaust_generator(response)
+
+        # let's ensure that raising a TypeError from within a handler,
+        # is not mistaken for an invalid call (EVENT_INVALID_CALL),
+        # and re-raises the exception
+        inst.register_callback("my_func", my_callback_raising_TypeError, **options)
+        try:
+            response = inst.process_request()
+            exhaust_generator(response)
+        except TypeError:
+            call_history.append('TypeError')
+
+        inst.register_callback("my_func", my_callback_raising_TypeError2, **options)
+        try:
+            response = inst.process_request()
+            exhaust_generator(response)
+        except TypeError:
+            call_history.append('TypeError2')
+
+        expected = ['call ok', 'invalid my_callback',
+                    'TypeError', 'TypeError2']
+        self.assertEqual(expected, call_history)
 
 
 class SijaxCometTestCase(unittest.TestCase):

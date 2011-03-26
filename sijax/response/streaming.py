@@ -89,8 +89,9 @@ class StreamingIframeResponse(BaseResponse):
     def _process_callback(self, callback, args):
         """Processes a callback to a normal or a streaming function.
 
-        In constrast with SijaxResponse._process_callback, which only
-        processes normal requests properly, this can process normal
+        In constrast with
+        :meth:`sijax.response.BaseResponse._process_callback` which only
+        processes normal requests properly, this can process both normal
         and streaming functions.
 
         Normal functions are the typical Sijax response functions,
@@ -101,22 +102,11 @@ class StreamingIframeResponse(BaseResponse):
         Streaming functions are the typical Comet response functions,
         which are generators (they use yield to flush content).
 
-        Basically this function can be seens as a converter from
+        Basically this function can be seen as a converter from
         either a generator (streaming function) or a string (normal function)
         to a generator.
         """
-
-        try:
-            response = callback(self, *args)
-        except TypeError:
-            # we should re-raise the exception if it's coming
-            # from within the function, meaning calling works.. @todo
-            failed_callback = callback
-            event_invalid_call = self._sijax.__class__.EVENT_INVALID_CALL
-            callback = self._sijax.get_event(event_invalid_call)
-            response = callback(self, failed_callback)
-
-
+        response = self._perform_handler_call(callback, args)
         if isinstance(response, GeneratorType):
             # Real streaming function using a generator to flush
             while True:
@@ -141,7 +131,6 @@ class StreamingIframeResponse(BaseResponse):
 
         :param call_chain: a list of two-tuples (callback, args list) to call
         """
-
         for callback, args in call_chain:
             generator = self._process_callback(callback, args)
             for string in generator:

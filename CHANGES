@@ -1,6 +1,13 @@
 Sijax Changelog
 ===============
 
+Version 0.2.1
+-------------
+
+TypeError exceptions raised from within Sijax handler functions will no longer
+be handled by Sijax. Until now they were mistaken for invalid function calls
+(bad arguments) and triggered the ``EVENT_INVALID_CALL`` event handler.
+
 Version 0.2.0
 -------------
 

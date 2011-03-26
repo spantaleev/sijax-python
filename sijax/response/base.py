@@ -245,6 +245,29 @@ class BaseResponse(object):
         commands in order.
         """
         return json.dumps(self._commands)
+
+    def _perform_handler_call(self, callback, args):
+        """Performs the actual calling of the Sijax handler function.
+
+        If the handler is called in a wrong way (bad arguments),
+        the ``EVENT_INVALID_CALL`` event handler will be executed instead.
+
+        Exceptions raised by the Sijax handler function won't be handled.
+        """
+        try:
+            return callback(self, *args)
+        except TypeError, e:
+            # This means that the function was called with bad arguments
+            # or that the function itself raised a TypeError.
+            # We can determine which is it by inspecting the traceback.
+            import sys, traceback
+            stack_entries = traceback.extract_tb(sys.exc_info()[2])
+            if len(stack_entries) != 1:
+                # TypeError raised from somewhere within the Sijax handler
+                raise e
+            # Invalid call to the handler (bad arguments)
+            evt_invalid_call = self._sijax.__class__.EVENT_INVALID_CALL
+            return self._sijax.get_event(evt_invalid_call)(self, callback)
     
     def _process_callback(self, callback, args):
         """Processes a single callback.
@@ -252,26 +275,18 @@ class BaseResponse(object):
         For normal responses this only means calling the callback,
         because we'll flush the commands to the client once (in the end).
 
-        For other responses (like Comet) though we can flush implicitly after
-        every callback.
+        For other responses (like Comet) though we can flush
+        implicitly after every callback.
         """
-
-        try:
-            result = callback(self, *args)
-        except TypeError:
-            # we should re-raise the exception if it's coming
-            # from within the function, meaning calling works.. @todo
-            event_invalid_call = self._sijax.__class__.EVENT_INVALID_CALL
-            self._sijax.get_event(event_invalid_call)(self, callback)
-        else:
-            # We usually don't expect a return value,
-            # but if we get a generator, it may mean that our regular function
-            # was used like a streaming function (yield).
-            # This is a a mistake which could happen due to incorrect
-            # function registration.
-            if isinstance(result, GeneratorType):
-                raise SijaxError('Flushing/Yielding/Streaming is not '
-                                 'supported for regular functions!')
+        response = self._perform_handler_call(callback, args)
+        # We usually don't expect a return value,
+        # but if we get a generator, it may mean that our regular function
+        # was used like a streaming function (yield).
+        # This is a a mistake which could happen due to incorrect
+        # function registration.
+        if isinstance(response, GeneratorType):
+            raise SijaxError('Flushing/Yielding/Streaming is not '
+                             'supported for regular functions!')
 
     def _process_call_chain(self, call_chain):
         """Executes all the callbacks in the chain for this response object.
@@ -280,9 +295,8 @@ class BaseResponse(object):
         When all the callbacks have been executed, the buffer would contain
         a list of commands that we need to pass to the browser (in order).
 
-        The result of this is a JSON string to pass to the browser.
-
         :param call_chain: a list of two-tuples (callback, args list) to call
+        :return: JSON string to be passed to the browser
         """
         for callback, args in call_chain:
             self._process_callback(callback, args)
