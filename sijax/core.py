@@ -101,13 +101,11 @@ class Sijax(object):
 
         def invalid_request(obj_response, func_name):
             """Handler to be called when an unknown function is called."""
-
             msg = 'The action you performed is unavailable! (Sijax error)'
             obj_response.alert(msg)
 
         def invalid_call(obj_response, callback):
             """Handler to be called when a function is called the wrong way."""
-
             msg = 'You tried to perform an action in a wrong way! (Sijax error)'
             obj_response.alert(msg)
 
@@ -187,7 +185,6 @@ class Sijax(object):
                            after the response object argument and before the
                            other call arguments
         """
-
         if response_class is None:
             response_class = BaseResponse
         if not hasattr(response_class, '__call__'):
@@ -285,7 +282,6 @@ class Sijax(object):
         Refer to :meth:`sijax.Sijax.execute_callback` to see how the main
         handler is called and what the response (return value) is.
         """
-
         if not self.is_sijax_request:
             raise SijaxError('You should not call this for non-Sijax requests!')
         
@@ -320,7 +316,6 @@ class Sijax(object):
                                        to see what else is available
         :return: string for regular callbacks or generator for streaming callbacks
         """
-
         cls = self.__class__
 
         # Another response class could be used to extend behavior
@@ -402,7 +397,6 @@ class Sijax(object):
         Note that the javascript code is unique and cannot be shared between
         different pages.
         """
-
         if self._request_uri is None:
             raise SijaxError('Trying to get the sijax js, '
                              'but no request_uri has been set!')

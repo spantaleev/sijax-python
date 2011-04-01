@@ -263,9 +263,9 @@ class SijaxMainTestCase(unittest.TestCase):
 
         inst = Sijax()
         cls = inst.__class__
-        inst.register_event(cls.EVENT_INVALID_CALL, invalid_call)
         inst.register_callback("my_func", my_callback)
 
+        # Make a valid call that would succeed
         inst.set_data({cls.PARAM_REQUEST: "my_func", cls.PARAM_ARGS: '["arg1", 12]'})
         self.assertTrue(inst.is_sijax_request)
         self.assertEqual("my_func", inst.requested_function)
@@ -273,8 +273,29 @@ class SijaxMainTestCase(unittest.TestCase):
         response = inst.process_request()
         self.assertTrue(isinstance(response, StringType))
 
-        # we should have succeeded until now..
-        # let's try to make the call invalid and observe the failure
+
+        # Make a call with a wrong number of arguments, and a default
+        # event handler for invalid calls
+        inst.set_data({cls.PARAM_REQUEST: "my_func", cls.PARAM_ARGS: '["arg1"]'})
+        self.assertTrue(inst.is_sijax_request)
+        self.assertEqual("my_func", inst.requested_function)
+        self.assertEqual(["arg1"], inst.request_args)
+        response = inst.process_request()
+        self.assertTrue(isinstance(response, StringType))
+        try:
+            commands = json.loads(response)
+        except:
+            self.fail("Invalid JSON generated!")
+        else:
+            self.assertTrue(isinstance(commands, list))
+            # we expect the default "Action performed in a wrong way" alert
+            self.assertEqual(1, len(commands))
+            command_data = commands.pop(0)
+            self.assertTrue("type" in command_data)
+            self.assertEqual("alert", command_data["type"])
+
+        # Make an invalid call with a custom event handler function
+        inst.register_event(cls.EVENT_INVALID_CALL, invalid_call)
         inst.set_data({cls.PARAM_REQUEST: "my_func", cls.PARAM_ARGS: '[]'})
         self.assertEqual("my_func", inst.requested_function)
         self.assertEqual([], inst.request_args)
@@ -477,7 +498,7 @@ class SijaxMainTestCase(unittest.TestCase):
         try_args(False, False)
         try_args({"dictionary": "here"}, False)
 
-    def test_regula_functions_that_yield_are_not_allowed(self):
+    def test_regular_functions_that_yield_are_not_allowed(self):
         # Yielding is only supported by streaming functions.
         # It makes no sense for regular functions to use it.
         # If a regular function tries to yield, we expect
@@ -604,6 +625,39 @@ class SijaxMainTestCase(unittest.TestCase):
             fp.write('version_string')
             fp.close()
             try_init(static_path, True)
+
+    def test_response_classes_need_to_be_callable(self):
+        # This ensures that register_callback will catch
+        # a custom response_class which is not really a class
+        # or a callable function which could produce a class instance
+
+        inst = Sijax()
+
+        def try_response_class(response_class, should_succeed):
+            success = False
+            try:
+                inst.register_callback("name", lambda r: r, response_class=response_class)
+                success = True
+            except SijaxError:
+                pass
+
+            self.assertEqual(should_succeed, success, "Failure for %s" % repr(response_class))
+
+        try_response_class(BaseResponse, True)
+
+        class CustomResponse(BaseResponse): pass
+        try_response_class(CustomResponse, True)
+
+        # A callable instead of a response class still works
+        def response_factory(*args, **kwargs):
+            return CustomResponse(*args, **kwargs)
+        try_response_class(response_factory, True)
+
+        # This works too, because None makes it use the default (BaseResponse)
+        try_response_class(None, True)
+
+        try_response_class('', False)
+        try_response_class(14, False)
 
 
 class SijaxStreamingTestCase(unittest.TestCase):
