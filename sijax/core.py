@@ -240,7 +240,7 @@ class Sijax(object):
     @property
     def requested_function(self):
         """The name of the requested function,
-        or None if the current request is not a Sijax requset."""
+        or None if the current request is not a Sijax request."""
         request = self.__class__.PARAM_REQUEST
         return str(self._data[request]) if request in self._data else None
     
