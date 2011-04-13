@@ -1,6 +1,12 @@
 Sijax Changelog
 ===============
 
+Version 0.2.2
+-------------
+
+TypeError exceptions from sijax handlers are now re-raised in a smarter way,
+so that the full traceback would be available.
+
 Version 0.2.1
 -------------
 
