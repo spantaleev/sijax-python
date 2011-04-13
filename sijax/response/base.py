@@ -256,7 +256,7 @@ class BaseResponse(object):
         """
         try:
             return callback(self, *args)
-        except TypeError, e:
+        except TypeError:
             # This means that the function was called with bad arguments
             # or that the function itself raised a TypeError.
             # We can determine which is it by inspecting the traceback.

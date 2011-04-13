@@ -14,7 +14,6 @@
 
 
 from ...helper import json
-from ...exception import SijaxError
 from ...response import StreamingIframeResponse
 
 # Parameters with these names are passed to the client side (JS)
