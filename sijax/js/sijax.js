@@ -38,7 +38,7 @@ Sijax.process_alert = function (params) {
 
 Sijax.process_html = function (params) {
 	var selectorResult = jQuery(params.selector);
-	
+
 	if (params.setType == 'replace') {
 		selectorResult.html(params.html);
 	} else if (params.setType == 'append') {
@@ -50,7 +50,7 @@ Sijax.process_html = function (params) {
 
 Sijax.process_attr = function (params) {
 	var selectorResult = jQuery(params.selector);
-	
+
 	if (params.setType === 'replace') {
 		selectorResult.attr(params.key, params.value);
 	} else if (params.setType === 'append') {
@@ -75,7 +75,7 @@ Sijax.process_remove = function (params) {
 Sijax.process_call = function (params) {
 	var callbackString = params.call,
 		callback = eval(callbackString);
-	
+
 	callback.apply(null, params.params);
 };
 
@@ -83,17 +83,17 @@ Sijax.request = function (functionName, callArgs, requestParams) {
 	if (callArgs === undefined) {
 		callArgs = [];
 	}
-	
+
 	if (requestParams === undefined) {
 		requestParams = {};
 	}
-	
+
 	var data = {},
 		defaultRequestParams;
 
 	data[Sijax.PARAM_REQUEST] = functionName;
 	data[Sijax.PARAM_ARGS] = JSON.stringify(callArgs);
-	
+
 	defaultRequestParams = {
 		"url": Sijax.requestUri,
 		"type": "POST",
@@ -102,7 +102,7 @@ Sijax.request = function (functionName, callArgs, requestParams) {
 		"dataType": "json",
 		"success": Sijax.processCommands
 	};
-	
+
 	jQuery.ajax(jQuery.extend(defaultRequestParams, requestParams));
 };
 

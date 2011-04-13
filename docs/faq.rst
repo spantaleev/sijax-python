@@ -23,7 +23,7 @@ JSON is also needed (for encoding messages) in the browser, so browsers having n
 Sijax will detect such browsers and load the library for them, provided you have pointed to it like so::
 
     sijax_instance.set_json_uri('{URI TO json2.js}')
-    
+
 The ``json2.js`` file is included with this project.
 
 Browsers that do have native JSON support won't need to load this additional resource.

@@ -147,7 +147,7 @@ Here's an example::
     # Let's assume that this is the entry point for all page requests
     def index():
         hello_from = get_site_name_from_database()
-        
+
         sijax_instance = Sijax()
         sijax_instance.set_data(POST_DICTIONARY_HERE)
         sijax_instance.register_callback('say_hello', say_hello_handler, args_extra=[hello_from])
@@ -229,7 +229,7 @@ The result would be the following 3 alerts in order::
     Called before calling the response function!
     The call to say_hi failed!
     Called after calling the response function!
- 
+
 If a request for ``say_hello_instead_of_hi`` is made using::
 
     Sijax.request('say_hello_instead_of_hi');

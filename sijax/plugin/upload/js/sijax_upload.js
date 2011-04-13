@@ -11,16 +11,16 @@ sjxUpload.prepareForm = function (formId, callbackName) {
 		formObject = jQuery('#' + formId),
 		requestArgs = JSON.stringify([formId]),
 		element;
-	
+
 	formObject.attr('target', frameId);
 	formObject.attr('method', 'post');
 	formObject.attr('enctype', 'multipart/form-data');
-	
+
 	if (formObject.attr('action') === '') {
 		//Only change the submit URI if it's not explicitly set to something
 		formObject.attr('action', Sijax.getRequestUri());
 	}
-	
+
 	if (formObject.attr(Sijax.PARAM_REQUEST) === undefined) {
 		//Initial registration
 		element = document.createElement('input');
@@ -28,7 +28,7 @@ sjxUpload.prepareForm = function (formId, callbackName) {
 		element.setAttribute('name', Sijax.PARAM_REQUEST);
 		element.setAttribute('value', callbackName);
 		formObject.append(element);
-		
+
 		element = document.createElement('input');
 		element.setAttribute('type', 'hidden');
 		element.setAttribute('name', Sijax.PARAM_ARGS);
@@ -43,11 +43,11 @@ sjxUpload.prepareForm = function (formId, callbackName) {
 
 sjxUpload.resetForm = function (formId) {
 	var callbackName = jQuery('#' + formId).attr(Sijax.PARAM_REQUEST).value;
-	
+
 	jQuery('#' + formId).each(function () {
 		this.reset();
 	});
-	
+
 	sjxUpload.prepareForm(formId, callbackName);
 };
 
@@ -56,13 +56,13 @@ sjxUpload.registerForm = function (params) {
 		frameId = sjxUpload.getFrameId(formId),
 		callbackName = params.callback,
 		iframe = document.createElement('iframe');
-	
+
 	iframe.setAttribute('id', frameId);
 	iframe.setAttribute('name', frameId);
 	iframe.setAttribute('style', 'display: none');
 
 	jQuery('#' + formId).append(iframe);
-	
+
 	if (window.frames[frameId].name !== frameId) {
 		//IE bugfixes
 		window.frames[frameId].name = frameId;

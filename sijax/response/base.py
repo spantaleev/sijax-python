@@ -22,7 +22,7 @@ class BaseResponse(object):
     pass information back to the browser. They do this by calling
     various methods, which queue commands until they're sent to the browser.
     """
-    
+
     COMMAND_ALERT = 'alert'
     COMMAND_HTML = 'html'
     COMMAND_SCRIPT = 'script'
@@ -30,7 +30,7 @@ class BaseResponse(object):
     COMMAND_CSS = 'css'
     COMMAND_REMOVE = 'remove'
     COMMAND_CALL = 'call'
-    
+
     def __init__(self, sijax_instance, request_args):
         """Constructs a new empty Sijax Response object.
 
@@ -47,7 +47,7 @@ class BaseResponse(object):
         self._commands = []
         self._sijax = sijax_instance
         self._request_args = request_args
-    
+
     def _get_request_args(self):
         """Returns the arguments list to pass to callbacks.
 
@@ -55,16 +55,16 @@ class BaseResponse(object):
         call arguments, but other classes can override them however they need.
         """
         return self._request_args
-        
+
     def _add_command(self, cmd_type, params = None):
         """Adds a raw command to the buffer to send to the client."""
         if params is None:
             params = {}
         params['type'] = cmd_type
-        
+
         self._commands.append(params)
         return self
-    
+
     def clear_commands(self):
         """Clears the commands buffer.
 
@@ -88,11 +88,11 @@ class BaseResponse(object):
         """
         params = {self.__class__.COMMAND_ALERT: message}
         return self._add_command(self.__class__.COMMAND_ALERT, params)
-    
+
     def _html(self, selector, html, set_type):
         params = {'selector': selector, 'html': html, 'setType': set_type}
         return self._add_command(self.__class__.COMMAND_HTML, params)
-   
+
     def html(self, selector, html):
         """Assigns the given html value to all elements
         matching the jQuery selector.
@@ -115,13 +115,13 @@ class BaseResponse(object):
         but appends instead of assigning a new value.
         """
         return self._html(selector, html, "append")
-   
+
     def html_prepend(self, selector, html):
         """Same as :meth:`sijax.response.BaseResponse.html`,
         but prepends instead of assigning a new value.
         """
         return self._html(selector, html, 'prepend')
-    
+
     def script(self, js):
         """Executes the given javascript code.
 
@@ -180,7 +180,7 @@ class BaseResponse(object):
         :param value: the new value to assign to the property
         """
         return self._attr(selector, property_name, value, 'replace')
-    
+
     def attr_append(self, selector, property_name, value):
         """Same as :meth:`sijax.response.BaseResponse.attr`,
         but appends instead of assigning a new value."""
@@ -190,7 +190,7 @@ class BaseResponse(object):
         """Same as :meth:`sijax.response.BaseResponse.attr`,
         but prepends instead of assigning a new value."""
         return self._attr(selector, property_name, value, 'prepend')
-    
+
     def remove(self, selector):
         """Removes all elements that match the jQuery selector from the DOM.
 
@@ -203,7 +203,7 @@ class BaseResponse(object):
         params = {self.__class__.COMMAND_REMOVE: selector}
         return self._add_command(self.__class__.COMMAND_REMOVE, params)
 
-    
+
     def redirect(self, uri):
         """Redirects the browser to the given URI.
 
@@ -213,7 +213,7 @@ class BaseResponse(object):
 
         """
         return self.script('window.location = %s;' % json.dumps(uri))
-    
+
     def call(self, js_func_name, func_params=None):
         """Calls the given javascript function with the given arguments list.
 
@@ -237,7 +237,7 @@ class BaseResponse(object):
             'params': func_params
         }
         return self._add_command(self.__class__.COMMAND_CALL, params)
-    
+
     def _get_json(self):
         """Returns a JSON representation of the commands buffer list.
 
@@ -268,7 +268,7 @@ class BaseResponse(object):
             # Invalid call to the handler (bad arguments)
             evt_invalid_call = self._sijax.__class__.EVENT_INVALID_CALL
             return self._sijax.get_event(evt_invalid_call)(self, callback)
-    
+
     def _process_callback(self, callback, args):
         """Processes a single callback.
 

@@ -51,10 +51,10 @@ class StreamingIframeResponse(BaseResponse):
     def __init__(self, *args, **kwargs):
         BaseResponse.__init__(self, *args, **kwargs)
         self._is_first_flush = True
-    
+
     def _flush(self):
         """Generates command output to flush to the browser.
-        
+
         The output is not JSON, because it's evaluated in an
         iframe. We're generating some html markup with script tags
         to pass our commands JSON to the parent, which will then execute it.
@@ -85,7 +85,7 @@ class StreamingIframeResponse(BaseResponse):
             )
 
         return output
-    
+
     def _process_callback(self, callback, args):
         """Processes a callback to a normal or a streaming function.
 

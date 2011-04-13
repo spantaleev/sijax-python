@@ -24,7 +24,7 @@ To associate a handler function with an upload form on the page you need to use 
 Here's an example.
 Suppose you have this markup on your page::
 
-    <form id="formOne" name="formOne"                                                                                                                                              
+    <form id="formOne" name="formOne"
          style="width: 400px" method="post" enctype="multipart/form-data">
         Text field:
         <input type="text" name="message" value="Some text" /><br />
@@ -53,9 +53,9 @@ To convert this form to a Sijax-enabled one, you need the following Python code:
     def upload_handler(obj_response, form_values):
         # form_values = {'message': ['Some text'], 'chkbox': ['on'], 'dropdown': ['2']}
         obj_response.alert(repr(form_values))
-    
+
     js = register_upload_callback(sijax_instance, 'formOne', upload_handler)
-    
+
     # put the returned javascript code somewhere on your page to make your form Sijax-enabled
 
 
@@ -72,7 +72,7 @@ For some environments there's really no way around it, because at the context at
 there may not be an easy way (if any at all) to get a reference to the files object.
 
 To pass an additional argument to ``upload_handler`` just do::
-    
+
     files = {'your': 'file', 'object' 'here'}
 
     def upload_handler(obj_response, files, form_values):

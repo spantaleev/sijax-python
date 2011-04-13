@@ -39,10 +39,10 @@ class Sijax(object):
     or :meth:`sijax.Sijax.register_object`) are the only functions exposed to the
     browser for calling.
     """
-    
+
     PARAM_REQUEST = 'sijax_rq'
     PARAM_ARGS = 'sijax_args'
-    
+
     #: Event called immediately before calling the response function.
     #: The event handler function receives the Response object argument.
     EVENT_BEFORE_PROCESSING = 'before_processing'
@@ -57,7 +57,7 @@ class Sijax(object):
     #: followed by the public name of the function that was
     #: supposed to be called.
     EVENT_INVALID_REQUEST = 'invalid_request'
-    
+
     #: Event called when the function was called in a wrong way
     #: (bad arguments count).
     #: The event handler function receives the Response object argument
@@ -75,13 +75,13 @@ class Sijax(object):
     #: be passed automatically to the response function after the
     #: obj_response argument and before the other arguments
     PARAM_ARGS_EXTRA = 'args_extra'
-    
+
     def __init__(self):
         cls = self.__class__
 
         #: Would contain the request data (usually POST)
         self._data = {}
-        
+
         #: Would contain the callbacks (name => dictionary of params)
         self._callbacks = {}
 
@@ -94,7 +94,7 @@ class Sijax(object):
         #: The URI to json2.js or similar to provide JSON support
         #: for browsers that don't have it.. Sijax would load this on demand
         self._json_uri = None
-        
+
         #: Stores a cached version of the arguments
         #: to be passed to the requested function
         self._request_args = None
@@ -117,7 +117,7 @@ class Sijax(object):
         # Register the "error" events to show some alerts by default
         self.register_event(cls.EVENT_INVALID_REQUEST, invalid_request)
         self.register_event(cls.EVENT_INVALID_CALL, invalid_call)
-    
+
     def set_data(self, data):
         """Sets the incoming data dictionary (usually POST).
 
@@ -132,7 +132,7 @@ class Sijax(object):
     def get_data(self):
         """Returns the incoming data array that the current instance uses."""
         return self._data
-    
+
     def register_callback(self, public_name, callback, response_class=None,
                           args_extra=None):
         """Registers the specified callback function with the given name.
@@ -205,10 +205,10 @@ class Sijax(object):
 
         self._callbacks[public_name] = params
         return self
-    
+
     def register_object(self, obj, **options):
         """Registers all "public" callable attributes of the given object.
-        
+
         The object could be anything (module, class, class instance, etc.)
 
         :param obj: the object whose callable attributes to register
@@ -218,11 +218,11 @@ class Sijax(object):
         for attr_name in dir(obj):
             if attr_name.startswith('_'):
                 continue
-            
+
             attribute = getattr(obj, attr_name)
             if hasattr(attribute, '__call__'):
                 self.register_callback(attr_name, attribute, **options)
-    
+
     @property
     def is_sijax_request(self):
         """Tells whether this page request looks like
@@ -236,14 +236,14 @@ class Sijax(object):
             if k not in self._data:
                 return False
         return True
-    
+
     @property
     def requested_function(self):
         """The name of the requested function,
         or None if the current request is not a Sijax request."""
         request = self.__class__.PARAM_REQUEST
         return str(self._data[request]) if request in self._data else None
-    
+
     @property
     def request_args(self):
         """The arguments list, that the function was called with
@@ -265,7 +265,7 @@ class Sijax(object):
                 except (ValueError):
                     pass
         return self._request_args
-    
+
     def process_request(self):
         """Executes the Sijax request and returns the response.
 
@@ -284,7 +284,7 @@ class Sijax(object):
         """
         if not self.is_sijax_request:
             raise SijaxError('You should not call this for non-Sijax requests!')
-        
+
         function_name = self.requested_function
         if function_name in self._callbacks:
             options = self._callbacks[function_name]
@@ -295,20 +295,20 @@ class Sijax(object):
             args = [function_name]
             callback = self._events[self.__class__.EVENT_INVALID_REQUEST]
             options = {self.__class__.PARAM_CALLBACK: callback}
-        
+
         return self.execute_callback(args, **options)
-    
+
     def execute_callback(self, args, callback, **params):
         """Executes the given callback function and returns a response.
 
         Before executing the given callback, the
         :attr:`sijax.Sijax.EVENT_BEFORE_PROCESSING` event callback is fired.
-        After executing the given callback, the 
+        After executing the given callback, the
         :attr:`sijax.Sijax.EVENT_AFTER_PROCESSING` event callback is fired.
 
         The returned result could either be a string (for regular functions)
         or a generator (for streaming functions like Comet or Upload).
-        
+
         :param args: the arguments list to pass to the callback
         :param callback: the callback function to execute
         :param options: more options - look at
@@ -377,7 +377,7 @@ class Sijax(object):
         """
         self._request_uri = uri
         return self
-    
+
     def set_json_uri(self, uri):
         """Sets the URI to an external JSON library,
         for browsers that do not support native JSON (such as IE <= 7).
@@ -389,7 +389,7 @@ class Sijax(object):
         """
         self._json_uri = uri
         return self
-    
+
     def get_js(self):
         """Returns the javascript code needed to prepare the
         Sijax environment in the browser.
@@ -400,9 +400,9 @@ class Sijax(object):
         if self._request_uri is None:
             raise SijaxError('Trying to get the sijax js, '
                              'but no request_uri has been set!')
-        
+
         js = 'Sijax.setRequestUri(%s);' % json.dumps(self._request_uri)
         if self._json_uri is not None:
-            js += 'Sijax.setJsonUri(%s);' % json.dumps(self._json_uri) 
+            js += 'Sijax.setJsonUri(%s);' % json.dumps(self._json_uri)
         return js
 

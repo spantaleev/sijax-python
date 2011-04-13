@@ -44,7 +44,7 @@ Let's see how we can register a handler function as a Comet function.
 To register Comet function, you need to use the :func:`sijax.plugin.comet.register_comet_callback` registration helper::
 
     from sijax.plugin.comet import register_comet_callback
-    
+
     def comet_handler(obj_response):
         obj_response.alert("Comet!")
 

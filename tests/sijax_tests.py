@@ -58,7 +58,7 @@ class SijaxMainTestCase(unittest.TestCase):
         inst.set_data({"key": "value"})
         self.assertFalse(inst.is_sijax_request)
         self.assertTrue(inst.requested_function is None)
-        
+
         # missing args
         inst.set_data({cls.PARAM_REQUEST: "function"})
         self.assertFalse(inst.is_sijax_request)
@@ -103,9 +103,9 @@ class SijaxMainTestCase(unittest.TestCase):
         self.assertFalse(inst.has_event(event_name), "Custom event registered")
 
         inst.register_event(event_name, event_callback)
-        
+
         self.assertTrue(inst.has_event(event_name), "Failed to register event")
-                
+
     def test_executing_regular_callbacks_works(self):
         from types import StringType
 
@@ -245,7 +245,7 @@ class SijaxMainTestCase(unittest.TestCase):
 
         def my_callback(obj_response, arg1, arg2):
             call_history.append("call ok")
-        
+
         def my_callback_with_defaults(obj_response, arg1=138, arg2=15):
             call_history.append("defaults ok")
 
@@ -448,7 +448,7 @@ class SijaxMainTestCase(unittest.TestCase):
             call_history.append(arg1_custom)
             call_history.append(arg2_custom)
             call_history.append(arg_regular)
-            
+
         def callback_basic(obj_response, arg_regular):
             self.assertTrue(isinstance(obj_response, BaseResponse))
             call_history.append(arg_regular)
@@ -468,7 +468,7 @@ class SijaxMainTestCase(unittest.TestCase):
 
         call_history_expected = ["one", "two", "regular", "reg2"]
         self.assertEqual(call_history_expected, call_history)
-    
+
     def test_args_extra_expects_a_list_or_a_tuple(self):
         inst = Sijax()
 
@@ -481,7 +481,7 @@ class SijaxMainTestCase(unittest.TestCase):
                 pass
 
             self.assertEqual(should_succeed, success, "Failure for %s" % repr(args_extra))
-                
+
         # A list, a tuple and None should all work
         try_args([], True)
         try_args((), True)
@@ -714,7 +714,7 @@ class SijaxStreamingTestCase(unittest.TestCase):
         inst.register_event(cls.EVENT_BEFORE_PROCESSING, callback_before)
         inst.register_event(cls.EVENT_AFTER_PROCESSING, callback_after)
         options = {cls.PARAM_RESPONSE_CLASS: StreamingIframeResponse}
-        
+
         response = inst.execute_callback([], callback=callback_yielding, **options)
         self.assertTrue(isinstance(response, GeneratorType))
         # We should have the following yields:
@@ -733,7 +733,7 @@ class SijaxStreamingTestCase(unittest.TestCase):
             # flushing would be wasteful
             for i in range(10):
                 yield obj_response
-            
+
             for i in range(2):
                 obj_response.alert("hey")
                 yield obj_response
@@ -986,7 +986,7 @@ def suite():
     suite.addTest(unittest.makeSuite(SijaxStreamingTestCase))
     suite.addTest(unittest.makeSuite(SijaxCometTestCase))
     suite.addTest(unittest.makeSuite(SijaxUploadTestCase))
-    
+
     return suite
 
 

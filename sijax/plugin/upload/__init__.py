@@ -37,7 +37,7 @@ def func_name_by_form_id(form_id):
 
 def register_upload_callback(sijax_instance, form_id, callback, **options):
     """Helps you easily register Upload functions with Sijax.
-    
+
     We recommend the ``args_extra`` option to be used here, so that the
     response function would receive the files object or
     anything else it might be needing to manipulate file uploads.

@@ -38,7 +38,7 @@ def register_comet_callback(sijax_instance, public_name, callback, **options):
     instead of the regular::
 
         Sijax.request('function_name');
-    
+
     :param sijax_instance: the :class:`sijax.Sijax` instance to register callbacks with
     :param public_name: the name of the function that the client will use to call it
     :param callback: the actual function that would get called to process the request
@@ -61,7 +61,7 @@ def register_comet_object(sijax_instance, obj, **options):
     """
     options = _prepare_options(sijax_instance, options)
     sijax_instance.register_object(obj, **options)
-        
+
 
 class CometResponse(StreamingIframeResponse):
     """Class used for Comet handler functions,
