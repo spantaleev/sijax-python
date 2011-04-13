@@ -264,7 +264,7 @@ class BaseResponse(object):
             stack_entries = traceback.extract_tb(sys.exc_info()[2])
             if len(stack_entries) != 1:
                 # TypeError raised from somewhere within the Sijax handler
-                raise e
+                raise
             # Invalid call to the handler (bad arguments)
             evt_invalid_call = self._sijax.__class__.EVENT_INVALID_CALL
             return self._sijax.get_event(evt_invalid_call)(self, callback)

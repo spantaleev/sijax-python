@@ -68,7 +68,7 @@ def init_static_path(static_path):
             os.makedirs(path)
         except OSError, exc:
             if exc.errno != errno.EEXIST:
-                raise exc
+                raise
 
     mkdir_p(static_path)
 
