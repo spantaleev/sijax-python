@@ -14,10 +14,9 @@ Sijax.getRequestUri = function () {
 };
 
 Sijax.setJsonUri = function (uri) {
-	if (uri === null || typeof(JSON) !== "undefined") {
+	if (! uri || typeof(JSON) !== "undefined") {
 		return;
 	}
-
 	jQuery.getScript(uri);
 };
 
@@ -37,14 +36,13 @@ Sijax.process_alert = function (params) {
 };
 
 Sijax.process_html = function (params) {
-	var selectorResult = jQuery(params.selector);
-
+	var $obj = jQuery(params.selector);
 	if (params.setType == 'replace') {
-		selectorResult.html(params.html);
+		$obj.html(params.html);
 	} else if (params.setType == 'append') {
-		selectorResult.append(params.html);
+		$obj.append(params.html);
 	} else {
-		selectorResult.prepend(params.html);
+		$obj.prepend(params.html);
 	}
 };
 
@@ -77,16 +75,14 @@ Sijax.process_remove = function (params) {
 Sijax.process_call = function (params) {
 	var callbackString = params.call,
 		callback = eval(callbackString);
-
 	callback.apply(null, params.params);
 };
 
 Sijax.request = function (functionName, callArgs, requestParams) {
-	if (callArgs === undefined) {
+	if (! callArgs) {
 		callArgs = [];
 	}
-
-	if (requestParams === undefined) {
+	if (! requestParams) {
 		requestParams = {};
 	}
 
