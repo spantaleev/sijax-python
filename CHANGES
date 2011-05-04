@@ -1,6 +1,12 @@
 Sijax Changelog
 ===============
 
+Version 0.2.3
+-------------
+
+Adds jQuery 1.6 support, fixing problems caused by its new
+attributes/properties system.
+
 Version 0.2.2
 -------------
 
