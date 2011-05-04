@@ -8,36 +8,37 @@ sjxUpload.getFrameId = function (formId) {
 
 sjxUpload.prepareForm = function (formId, callbackName) {
 	var frameId = sjxUpload.getFrameId(formId),
-		formObject = jQuery('#' + formId),
+		$object = jQuery('#' + formId),
 		requestArgs = JSON.stringify([formId]),
-		element;
+		element,
+        attrOrProp = (! $object.prop ? 'attr' : 'prop');
 
-	formObject.attr('target', frameId);
-	formObject.attr('method', 'post');
-	formObject.attr('enctype', 'multipart/form-data');
+	$object.attr('target', frameId);
+	$object.attr('method', 'post');
+	$object.attr('enctype', 'multipart/form-data');
 
-	if (formObject.attr('action') === '') {
+	if ($object[attrOrProp]('action') === '') {
 		//Only change the submit URI if it's not explicitly set to something
-		formObject.attr('action', Sijax.getRequestUri());
+		$object[attrOrProp]('action', Sijax.getRequestUri());
 	}
 
-	if (formObject.attr(Sijax.PARAM_REQUEST) === undefined) {
+	if (! $object[attrOrProp](Sijax.PARAM_REQUEST)) {
 		//Initial registration
 		element = document.createElement('input');
 		element.setAttribute('type', 'hidden');
 		element.setAttribute('name', Sijax.PARAM_REQUEST);
 		element.setAttribute('value', callbackName);
-		formObject.append(element);
+		$object.append(element);
 
 		element = document.createElement('input');
 		element.setAttribute('type', 'hidden');
 		element.setAttribute('name', Sijax.PARAM_ARGS);
 		element.setAttribute('value', requestArgs);
-		formObject.append(element);
+		$object.append(element);
 	} else {
 		//The fields are already created, let's just "refresh" their contents
-		formObject.attr(Sijax.PARAM_REQUEST).value = callbackName;
-		formObject.attr(Sijax.PARAM_ARGS).value = requestArgs;
+		$object.find('input[name=' + Sijax.PARAM_REQUEST + ']').val(callbackName);
+		$object.find('input[name=' + Sijax.PARAM_ARGS + ']').val(requestArgs);
 	}
 };
 
