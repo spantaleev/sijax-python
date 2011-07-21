@@ -43,11 +43,10 @@ sjxUpload.prepareForm = function (formId, callbackName) {
 };
 
 sjxUpload.resetForm = function (formId) {
-	var callbackName = jQuery('#' + formId).attr(Sijax.PARAM_REQUEST).value;
+	var $form = jQuery('#' + formId),
+		callbackName = $form.find('input[name=' + Sijax.PARAM_REQUEST + ']').val();
 
-	jQuery('#' + formId).each(function () {
-		this.reset();
-	});
+	$form[0].reset();
 
 	sjxUpload.prepareForm(formId, callbackName);
 };
