@@ -127,7 +127,7 @@ class BaseResponse(object):
 
         Example::
 
-            obj_response.html("alert('Javascript code!');")
+            obj_response.script("alert('Javascript code!');")
 
         Note that the given javascript code is eval-ed inside a
         Sijax helper function in the browser, so it's not touching
