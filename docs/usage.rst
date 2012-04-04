@@ -116,7 +116,7 @@ Here's an example of a function, which uses a custom response class::
 
     # Custom Response class, which adds a new shortcut method
     class MyResponse(sijax.response.BaseResponse):
-        def say_hello_to(name):
+        def say_hello_to(self, name):
             self.alert('Hello %s' % name)
 
     # The handler function which would use our custom Response class
@@ -152,14 +152,14 @@ Here's an example::
         sijax_instance.set_data(POST_DICTIONARY_HERE)
         sijax_instance.register_callback('say_hello', say_hello_handler, args_extra=[hello_from])
         if sijax_instance.is_sijax_request:
-            return sijax_instance.proces_request()
+            return sijax_instance.process_request()
 
         # normal page request (not Sijax)
         return render_page()
 
 You can do extra arguments passing with mass registration too::
 
-    sijax_instance.register_object(SijaxHandler, arsg_extra=['additional', 'arguments', 'here'])
+    sijax_instance.register_object(SijaxHandler, args_extra=['additional', 'arguments', 'here'])
 
 
 Events
