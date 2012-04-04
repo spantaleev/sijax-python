@@ -29,17 +29,19 @@ Links
 * `documentation <http://packages.python.org/Sijax>`_
 """
 
+import sys
 from setuptools import setup, find_packages
-
 import sijax
 
-
 def run_tests():
-    import os, sys
+    import os
     sys.path.append(os.path.join(os.path.dirname(__file__), 'tests'))
     from sijax_tests import suite
     return suite()
 
+requirements = []
+if sys.version_info[:2] < (2, 6):
+    requirements.append('simplejson')
 
 setup(
     name = "Sijax",
@@ -55,9 +57,10 @@ setup(
     platforms = "any",
     license = "BSD",
     zip_safe = False,
+    install_requires = requirements,
     classifiers = [
         "Programming Language :: Python",
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Environment :: Web Environment",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
