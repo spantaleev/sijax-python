@@ -86,22 +86,20 @@ Sijax.request = function (functionName, callArgs, requestParams) {
 		requestParams = {};
 	}
 
-	var data = {},
-		defaultRequestParams;
-
-	data[Sijax.PARAM_REQUEST] = functionName;
-	data[Sijax.PARAM_ARGS] = JSON.stringify(callArgs);
-
-	defaultRequestParams = {
+	var defaultRequestParams = {
 		"url": Sijax.requestUri,
 		"type": "POST",
-		"data": data,
+		"data": {},
 		"cache": false,
 		"dataType": "json",
 		"success": Sijax.processCommands
 	};
 
-	jQuery.ajax(jQuery.extend(defaultRequestParams, requestParams));
+	requestParams = jQuery.extend(defaultRequestParams, requestParams);
+	requestParams.data[Sijax.PARAM_REQUEST] = functionName;
+	requestParams.data[Sijax.PARAM_ARGS] = JSON.stringify(callArgs);
+
+	jQuery.ajax(requestParams);
 };
 
 Sijax.getFormValues = function (formSelector) {
