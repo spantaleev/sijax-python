@@ -48,16 +48,16 @@ Sijax.process_html = function (params) {
 
 Sijax.process_attr = function (params) {
 	var $obj = jQuery(params.selector),
-        value,
-        attrOrProp = (! $obj.prop ? 'attr' : 'prop');
+		value,
+		attrOrProp = (! $obj.prop ? 'attr' : 'prop');
 	if (params.setType === 'replace') {
-        value = params.value;
+		value = params.value;
 	} else if (params.setType === 'append') {
-        value = $obj[attrOrProp](params.key) + params.value;
+		value = $obj[attrOrProp](params.key) + params.value;
 	} else {
-        value = params.value + $obj[attrOrProp](params.key);
+		value = params.value + $obj[attrOrProp](params.key);
 	}
-    $obj[attrOrProp](params.key, value);
+	$obj[attrOrProp](params.key, value);
 };
 
 Sijax.process_css = function (params) {
@@ -111,7 +111,7 @@ Sijax.getFormValues = function (formSelector) {
 		var attrName = this.name,
 			attrValue = jQuery(this).val(),
 			tagName = this.tagName,
-            $this = jQuery(this),
+			$this = jQuery(this),
 			type = $this.attr('type'),
 			nestingParts;
 
