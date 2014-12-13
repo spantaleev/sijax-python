@@ -66,7 +66,7 @@ def init_static_path(static_path):
         """Creates the whole directory tree (recursively), if it's missing."""
         try:
             os.makedirs(path)
-        except OSError, exc:
+        except OSError as exc:
             if exc.errno != errno.EEXIST:
                 raise
 
