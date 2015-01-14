@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import (absolute_import, unicode_literals)
+
 """
     sijax.response.streaming
     ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -16,6 +18,7 @@
 """
 
 
+from builtins import (str, next)
 from .base import BaseResponse
 from types import GeneratorType
 
@@ -111,7 +114,7 @@ class StreamingIframeResponse(BaseResponse):
             # Real streaming function using a generator to flush
             while True:
                 # we don't really care what it yields..
-                response.next()
+                next(response)
                 if len(self._commands) != 0:
                     yield self._flush()
         else:

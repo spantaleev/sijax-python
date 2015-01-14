@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from __future__ import (absolute_import, unicode_literals)
+
 """
 Sijax
 =====
@@ -30,8 +35,8 @@ Links
 """
 
 import sys
-from setuptools import setup, find_packages
-import sijax
+from setuptools import (setup, find_packages)
+from sijax import __version__
 
 def run_tests():
     import os
@@ -39,15 +44,11 @@ def run_tests():
     from sijax_tests import suite
     return suite()
 
-requirements = []
-if sys.version_info[:2] < (2, 6):
-    requirements.append('simplejson')
-
 setup(
     name = "Sijax",
-    packages = find_packages(),
+    packages=find_packages(),
     include_package_data = True,
-    version = sijax.__version__,
+    version = __version__,
     description = "An easy to use AJAX library based on jQuery.ajax",
     long_description = __doc__,
     author = "Slavi Pantaleev",
@@ -57,9 +58,13 @@ setup(
     platforms = "any",
     license = "BSD",
     zip_safe = False,
-    install_requires = requirements,
+    install_requires = ["future"],
     classifiers = [
         "Programming Language :: Python",
+        "Programming Language :: Python :: 2.6",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.3",
+        "Programming Language :: Python :: 3.4",
         "Development Status :: 5 - Production/Stable",
         "Environment :: Web Environment",
         "Intended Audience :: Developers",
@@ -67,6 +72,7 @@ setup(
         "Operating System :: OS Independent",
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
         "Topic :: Software Development :: Libraries :: Python Modules",
+        "Natural Language :: English",
     ],
     test_suite='__main__.run_tests'
 )
