@@ -8,7 +8,8 @@ import tempfile
 import shutil
 from contextlib import contextmanager
 
-from builtins import (range, str, next, open)
+from builtins import (range, next, open)
+from six import string_types
 
 sijax_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(sijax_path)
@@ -147,7 +148,7 @@ class SijaxMainTestCase(unittest.TestCase):
 
         # the response should be a string for regular functions
         # streaming functions return generators instead..
-        self.assertTrue(isinstance(response, str))
+        self.assertTrue(isinstance(response, string_types))
 
         from sijax.helper import json
         try:
@@ -218,7 +219,7 @@ class SijaxMainTestCase(unittest.TestCase):
         self.assertEqual(["arg1", 12], inst.request_args)
 
         response = inst.process_request()
-        self.assertTrue(isinstance(response, str))
+        self.assertTrue(isinstance(response, string_types))
 
         try:
             commands = json.loads(response)
@@ -271,7 +272,7 @@ class SijaxMainTestCase(unittest.TestCase):
         self.assertEqual("my_func", inst.requested_function)
         self.assertEqual(["arg1", 12], inst.request_args)
         response = inst.process_request()
-        self.assertTrue(isinstance(response, str))
+        self.assertTrue(isinstance(response, string_types))
 
 
         # Make a call with a wrong number of arguments, and a default
@@ -281,7 +282,7 @@ class SijaxMainTestCase(unittest.TestCase):
         self.assertEqual("my_func", inst.requested_function)
         self.assertEqual(["arg1"], inst.request_args)
         response = inst.process_request()
-        self.assertTrue(isinstance(response, str))
+        self.assertTrue(isinstance(response, string_types))
         try:
             commands = json.loads(response)
         except:
@@ -300,12 +301,12 @@ class SijaxMainTestCase(unittest.TestCase):
         self.assertEqual("my_func", inst.requested_function)
         self.assertEqual([], inst.request_args)
         response = inst.process_request()
-        self.assertTrue(isinstance(response, str))
+        self.assertTrue(isinstance(response, string_types))
 
         # let's see if calling works with default arguments
         inst.register_callback("my_func", my_callback_with_defaults)
         response = inst.process_request()
-        self.assertTrue(isinstance(response, str))
+        self.assertTrue(isinstance(response, string_types))
 
         # let's ensure that raising a TypeError from within a handler,
         # is not mistaken for an invalid call (EVENT_INVALID_CALL),
