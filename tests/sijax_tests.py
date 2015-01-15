@@ -6,6 +6,7 @@ import os
 import unittest
 import tempfile
 import shutil
+import json
 from contextlib import contextmanager
 
 from builtins import (range, str, next, open)
@@ -149,7 +150,6 @@ class SijaxMainTestCase(unittest.TestCase):
         # streaming functions return generators instead..
         self.assertTrue(isinstance(response, str))
 
-        from sijax.helper import json
         try:
             commands = json.loads(response)
         except:
@@ -206,7 +206,6 @@ class SijaxMainTestCase(unittest.TestCase):
             pass
 
     def test_process_request_calls_invalid_request_event_for_invalid_requests(self):
-        from sijax.helper import json
 
         # An invalid request is a request for a function that's not registered,
         # meaning the request is invalid as far as sijax is concerned
@@ -235,7 +234,6 @@ class SijaxMainTestCase(unittest.TestCase):
 
     def test_process_request_calls_invalid_call_event_for_invalid_calls(self):
         from types import FunctionType
-        from sijax.helper import json
 
         # An invalid call is a call to a function that appears valid.
         # The function is registered (known), but calling fails, because

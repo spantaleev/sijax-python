@@ -15,7 +15,7 @@ from __future__ import (absolute_import, unicode_literals)
 """
 
 
-from ...helper import json
+import json
 from ...response import StreamingIframeResponse
 
 # Parameters with these names are passed to the client side (JS)

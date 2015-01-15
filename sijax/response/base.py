@@ -14,8 +14,8 @@ from __future__ import (absolute_import, unicode_literals)
 """
 
 
+import json
 from builtins import (object, str)
-from ..helper import json
 from ..exception import SijaxError
 from types import GeneratorType
 

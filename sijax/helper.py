@@ -17,28 +17,6 @@ from builtins import (next, open)
 from .exception import SijaxError
 
 
-# Try to load the best json implementation,
-# If json support is not available, we'll add
-# an object that raises a RuntimeError when used
-json = None
-try:
-    import simplejson as json
-except ImportError:
-    try:
-        import json
-    except ImportError:
-        try:
-            # Google Appengine offers simplejson via django
-            from django.utils import simplejson as json
-        except ImportError:
-            pass
-if json is None:
-    class _JSON(object):
-        def __getattr__(self, name):
-            raise RuntimeError('You need a JSON library to use Sijax!')
-    json = _JSON()
-
-
 def init_static_path(static_path):
     """Mirrors the important static files from the whole Sijax package
     into a directory of your choice.
