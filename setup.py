@@ -71,7 +71,7 @@ setup(
     platforms = "any",
     license = "BSD",
     zip_safe = False,
-    install_requires = ["future"],
+    install_requires = ["six", "future"],
     classifiers = [
         "Programming Language :: Python",
         "Programming Language :: Python :: 2.6",
