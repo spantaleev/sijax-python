@@ -34,9 +34,22 @@ Links
 * `documentation <http://packages.python.org/Sijax>`_
 """
 
-import sys
+import sys, os, re
 from setuptools import (setup, find_packages)
-from sijax import __version__
+
+def determine_version():
+    """Determines the version in a way that works on Python 2.x.
+
+    We need to do it this way, instead of simply importing sijax.__version__,
+    because the code can't (initially) work on Python 2.x without the `future`
+    dependency being installed.
+    """
+    regex_version = re.compile("__version__ = '([^']+)'")
+    with open(os.path.join(os.path.dirname(__file__), 'sijax', '__init__.py'), 'r') as fp:
+        matches = regex_version.search(fp.read())
+        if matches is None:
+            raise RuntimeError('Cannot determine version')
+        return matches.group(1)
 
 def run_tests():
     import os
@@ -48,7 +61,7 @@ setup(
     name = "Sijax",
     packages=find_packages(),
     include_package_data = True,
-    version = __version__,
+    version = determine_version(),
     description = "An easy to use AJAX library based on jQuery.ajax",
     long_description = __doc__,
     author = "Slavi Pantaleev",

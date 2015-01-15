@@ -4,5 +4,7 @@ env
 env*
 dist
 *.egg-info
+/.eggs
+/build
 *.swp
 docs/_build
