@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*
 
+from __future__ import (absolute_import, unicode_literals)
+
 """
     sijax.core
     ~~~~~~~~~~
@@ -11,9 +13,8 @@
     :license: BSD, see LICENSE.txt for more details.
 """
 
-
+from builtins import str
 from .helper import json
-
 from .response.base import BaseResponse
 from .exception import SijaxError
 

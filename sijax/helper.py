@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import (absolute_import, unicode_literals)
+
 """
     sijax.helper
     ~~~~~~~~~~~~
@@ -11,6 +13,7 @@
 """
 
 
+from builtins import (next, open)
 from .exception import SijaxError
 
 
@@ -59,26 +62,24 @@ def init_static_path(static_path):
                           do not touch this file
     """
 
-    import os, shutil, errno
+    import os, shutil
     import sijax
 
     def mkdir_p(path):
         """Creates the whole directory tree (recursively), if it's missing."""
-        try:
+        if not os.path.exists(path):
             os.makedirs(path)
-        except OSError, exc:
-            if exc.errno != errno.EEXIST:
-                raise
 
     mkdir_p(static_path)
 
     version_file = os.path.join(static_path, 'sijax_version')
 
     if os.path.exists(version_file):
-        version = open(version_file).read()
+        with open(version_file) as fp:
+            version = fp.read()
     else:
         version = None
-        files_count = len(os.walk(static_path).next()[2])
+        files_count = len(next(os.walk(static_path))[2])
         if files_count != 0:
             # non-empty path with a missing version file
             # this looks like a user directory - we'd better not touch anything!
@@ -111,7 +112,6 @@ def init_static_path(static_path):
         if not os.path.lexists(dst_path):
             shutil.copyfile(src_path, dst_path)
 
-    fp = open(version_file, 'w')
-    fp.write(sijax.__version__)
-    fp.close()
+    with open(version_file, 'w') as fp:
+        fp.write(sijax.__version__)
 

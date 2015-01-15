@@ -1,4 +1,5 @@
-from __future__ import with_statement
+
+from __future__ import (absolute_import, unicode_literals)
 
 import sys
 import os
@@ -7,6 +8,7 @@ import tempfile
 import shutil
 from contextlib import contextmanager
 
+from builtins import (range, str, next, open)
 
 sijax_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(sijax_path)
@@ -107,7 +109,6 @@ class SijaxMainTestCase(unittest.TestCase):
         self.assertTrue(inst.has_event(event_name), "Failed to register event")
 
     def test_executing_regular_callbacks_works(self):
-        from types import StringType
 
         calls_history = []
         call_args_history = []
@@ -146,7 +147,7 @@ class SijaxMainTestCase(unittest.TestCase):
 
         # the response should be a string for regular functions
         # streaming functions return generators instead..
-        self.assertTrue(isinstance(response, StringType))
+        self.assertTrue(isinstance(response, str))
 
         from sijax.helper import json
         try:
@@ -205,7 +206,6 @@ class SijaxMainTestCase(unittest.TestCase):
             pass
 
     def test_process_request_calls_invalid_request_event_for_invalid_requests(self):
-        from types import StringType
         from sijax.helper import json
 
         # An invalid request is a request for a function that's not registered,
@@ -218,7 +218,7 @@ class SijaxMainTestCase(unittest.TestCase):
         self.assertEqual(["arg1", 12], inst.request_args)
 
         response = inst.process_request()
-        self.assertTrue(isinstance(response, StringType))
+        self.assertTrue(isinstance(response, str))
 
         try:
             commands = json.loads(response)
@@ -234,7 +234,7 @@ class SijaxMainTestCase(unittest.TestCase):
             self.assertEqual("alert", command_data["type"])
 
     def test_process_request_calls_invalid_call_event_for_invalid_calls(self):
-        from types import StringType, FunctionType
+        from types import FunctionType
         from sijax.helper import json
 
         # An invalid call is a call to a function that appears valid.
@@ -271,7 +271,7 @@ class SijaxMainTestCase(unittest.TestCase):
         self.assertEqual("my_func", inst.requested_function)
         self.assertEqual(["arg1", 12], inst.request_args)
         response = inst.process_request()
-        self.assertTrue(isinstance(response, StringType))
+        self.assertTrue(isinstance(response, str))
 
 
         # Make a call with a wrong number of arguments, and a default
@@ -281,7 +281,7 @@ class SijaxMainTestCase(unittest.TestCase):
         self.assertEqual("my_func", inst.requested_function)
         self.assertEqual(["arg1"], inst.request_args)
         response = inst.process_request()
-        self.assertTrue(isinstance(response, StringType))
+        self.assertTrue(isinstance(response, str))
         try:
             commands = json.loads(response)
         except:
@@ -300,12 +300,12 @@ class SijaxMainTestCase(unittest.TestCase):
         self.assertEqual("my_func", inst.requested_function)
         self.assertEqual([], inst.request_args)
         response = inst.process_request()
-        self.assertTrue(isinstance(response, StringType))
+        self.assertTrue(isinstance(response, str))
 
         # let's see if calling works with default arguments
         inst.register_callback("my_func", my_callback_with_defaults)
         response = inst.process_request()
-        self.assertTrue(isinstance(response, StringType))
+        self.assertTrue(isinstance(response, str))
 
         # let's ensure that raising a TypeError from within a handler,
         # is not mistaken for an invalid call (EVENT_INVALID_CALL),
@@ -530,7 +530,7 @@ class SijaxMainTestCase(unittest.TestCase):
             try:
                 inst.execute_callback([], callback)
                 success = True
-            except SijaxError, ex:
+            except SijaxError:
                 pass
 
             self.assertEqual(should_succeed, success, "Failure for %s" %
@@ -555,38 +555,39 @@ class SijaxMainTestCase(unittest.TestCase):
             version_file = os.path.join(static_path, 'sijax_version')
             if not os.path.exists(version_file):
                 self.fail('Version file %s does not exist' % version_file)
-            self.assertEqual(open(version_file).read(), sijax.__version__)
+            with open(version_file) as fp:
+                self.assertEqual(fp.read(), sijax.__version__)
 
             core_js_file = os.path.join(static_path, 'sijax.js')
 
             # let's ensure that files are only written (or deleted)
             # if the version changes
-            fp = open(core_js_file, 'w')
-            fp.write('new stuff')
-            fp.close()
+            with open(core_js_file, 'w') as fp:
+                fp.write('new stuff')
             init_static_path(static_path)
             # version file is the same, so it shouldn't touch it
-            self.assertEqual(open(core_js_file).read(), 'new stuff')
+            with open(core_js_file) as fp:
+                self.assertEqual(fp.read(), 'new stuff')
 
 
-            fp = open(version_file, 'w')
-            fp.write('another_version_string')
-            fp.close()
+            with open(version_file, 'w') as fp:
+                fp.write('another_version_string')
 
             # let's also create another file (as it's from the old version)
             # and make sure that init will delete it
             new_file = os.path.join(static_path, 'extra-file.js')
             self.assertFalse(os.path.exists(new_file))
-            fp = open(new_file, 'w')
-            fp.write('blah')
-            fp.close()
+            with open(new_file, 'w') as fp:
+                fp.write('blah')
             self.assertTrue(os.path.exists(new_file))
 
             # the version string is different, so we expect a complete resync
             # - extra files should be deleted, other files should be updated
             init_static_path(static_path)
-            self.assertNotEqual(open(core_js_file).read(), 'new stuff')
-            self.assertEqual(open(version_file).read(), sijax.__version__)
+            with open(core_js_file) as fp:
+                self.assertNotEqual(fp.read(), 'new stuff')
+            with open(version_file) as fp:
+                self.assertEqual(fp.read(), sijax.__version__)
             self.assertFalse(os.path.exists(new_file))
 
     def test_static_path_helper_refuses_to_write_to_non_empty_paths(self):
@@ -611,19 +612,16 @@ class SijaxMainTestCase(unittest.TestCase):
 
         # A directory with some files (but not version file) should fail
         with temporary_dir() as static_path:
-            fp = open(os.path.join(static_path, 'some.file'), 'w')
-            fp.write('blah')
-            fp.close()
+            with open(os.path.join(static_path, 'some.file'), 'w') as fp:
+                fp.write('blah')
             try_init(static_path, False)
 
         # A directory with some files, but also a version file
         with temporary_dir() as static_path:
-            fp = open(os.path.join(static_path, 'some.file'), 'w')
-            fp.write('blah')
-            fp.close()
-            fp = open(os.path.join(static_path, 'sijax_version'), 'w')
-            fp.write('version_string')
-            fp.close()
+            with open(os.path.join(static_path, 'some.file'), 'w') as fp:
+                fp.write('blah')
+            with open(os.path.join(static_path, 'sijax_version'), 'w') as fp:
+                fp.write('version_string')
             try_init(static_path, True)
 
     def test_response_classes_need_to_be_callable(self):
@@ -703,7 +701,7 @@ class SijaxStreamingTestCase(unittest.TestCase):
             items = []
             try:
                 while True:
-                    items.append(generator.next())
+                    items.append(next(generator))
             except StopIteration:
                 pass
 
@@ -782,7 +780,7 @@ class SijaxStreamingTestCase(unittest.TestCase):
             self.assertTrue(isinstance(gen, GeneratorType))
             try:
                 while True:
-                    gen.next()
+                    next(gen)
             except StopIteration:
                 pass
 

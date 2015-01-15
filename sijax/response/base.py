@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import (absolute_import, unicode_literals)
+
 """
     sijax.response.base
     ~~~~~~~~~~~~~~~~~~~
@@ -12,6 +14,7 @@
 """
 
 
+from builtins import (object, str)
 from ..helper import json
 from ..exception import SijaxError
 from types import GeneratorType
@@ -212,7 +215,7 @@ class BaseResponse(object):
             obj_response.redirect('http://example.com/')
 
         """
-        return self.script('window.location = %s;' % json.dumps(uri))
+        return self.script('window.location = %s;' % str(json.dumps(uri)))
 
     def call(self, js_func_name, func_params=None):
         """Calls the given javascript function with the given arguments list.
@@ -244,7 +247,7 @@ class BaseResponse(object):
         The client side code will loop over the list and execute all the
         commands in order.
         """
-        return json.dumps(self._commands)
+        return str(json.dumps(self._commands))
 
     def _perform_handler_call(self, callback, args):
         """Performs the actual calling of the Sijax handler function.
