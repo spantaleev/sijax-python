@@ -6,7 +6,10 @@ import os
 import unittest
 import tempfile
 import shutil
-import json
+try:
+    import simplejson as json
+except ImportError:
+    import json
 from contextlib import contextmanager
 
 from builtins import (range, str, next, open)

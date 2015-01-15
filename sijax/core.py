@@ -13,7 +13,10 @@ from __future__ import (absolute_import, unicode_literals)
     :license: BSD, see LICENSE.txt for more details.
 """
 
-import json
+try:
+    import simplejson as json
+except ImportError:
+    import json
 from builtins import str
 from .response.base import BaseResponse
 from .exception import SijaxError
