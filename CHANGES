@@ -1,6 +1,11 @@
 Sijax Changelog
 ===============
 
+Version 0.3.0
+-------------
+
+Introduces Python 3 compatibility, drops Python 2.5 compatibility.
+
 Version 0.2.5
 -------------
 
