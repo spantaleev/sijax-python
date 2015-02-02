@@ -1,6 +1,12 @@
 Sijax Changelog
 ===============
 
+Version 0.3.1
+-------------
+
+Fixes Python 2 regression (does not force unicode).
+Makes JSON output more compact.
+
 Version 0.3.0
 -------------
 
