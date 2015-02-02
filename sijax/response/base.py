@@ -14,10 +14,11 @@ from __future__ import (absolute_import, unicode_literals)
 """
 
 
-from builtins import (object, str)
+from builtins import object
 from ..helper import json
 from ..exception import SijaxError
 from types import GeneratorType
+from functools import partial
 
 
 class BaseResponse(object):
@@ -33,6 +34,13 @@ class BaseResponse(object):
     COMMAND_CSS = 'css'
     COMMAND_REMOVE = 'remove'
     COMMAND_CALL = 'call'
+    #: Options related to the appearance of JSON during communication. By
+    #: default the most compact form is chosen.
+    JSON_AS_ASCII = True
+    JSON_SEPARATORS = (',', ':')
+    JSON_INDENT = None
+    JSON_SORT_KEYS = False
+
 
     def __init__(self, sijax_instance, request_args):
         """Constructs a new empty Sijax Response object.
@@ -50,6 +58,9 @@ class BaseResponse(object):
         self._commands = []
         self._sijax = sijax_instance
         self._request_args = request_args
+        self.dumps = partial(json.dumps, ensure_ascii=self.JSON_AS_ASCII,
+                separators=self.JSON_SEPARATORS, indent=self.JSON_INDENT,
+                sort_keys=self.JSON_SORT_KEYS)
 
     def _get_request_args(self):
         """Returns the arguments list to pass to callbacks.
@@ -215,7 +226,7 @@ class BaseResponse(object):
             obj_response.redirect('http://example.com/')
 
         """
-        return self.script('window.location = %s;' % str(json.dumps(uri)))
+        return self.script('window.location = %s;' % self.dumps(uri))
 
     def call(self, js_func_name, func_params=None):
         """Calls the given javascript function with the given arguments list.
@@ -247,7 +258,7 @@ class BaseResponse(object):
         The client side code will loop over the list and execute all the
         commands in order.
         """
-        return str(json.dumps(self._commands))
+        return self.dumps(self._commands)
 
     def _perform_handler_call(self, callback, args):
         """Performs the actual calling of the Sijax handler function.
