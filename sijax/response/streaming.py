@@ -137,5 +137,5 @@ class StreamingIframeResponse(BaseResponse):
         for callback, args in call_chain:
             generator = self._process_callback(callback, args)
             for string in generator:
-                yield str(string)
+                yield bytes(string)
 
