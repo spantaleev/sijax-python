@@ -18,7 +18,7 @@ from __future__ import (absolute_import, unicode_literals)
 """
 
 
-from builtins import (str, next)
+from builtins import next
 from .base import BaseResponse
 from types import GeneratorType
 
@@ -137,5 +137,9 @@ class StreamingIframeResponse(BaseResponse):
         for callback, args in call_chain:
             generator = self._process_callback(callback, args)
             for string in generator:
-                yield str(string)
+                yield string.encode("utf-8")
+#                yield bytes(string, "utf-8")
+# in Python 3 every string is unicode and `bytes` will encode accordingly
+# in Python 2, using `bytes` from the future module ensures a byte string but
+# simply encoding is backwards compatible with `werkzeug`
 

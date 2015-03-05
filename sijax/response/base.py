@@ -36,7 +36,7 @@ class BaseResponse(object):
     COMMAND_CALL = 'call'
     #: Options related to the appearance of JSON during communication. By
     #: default the most compact form is chosen.
-    JSON_AS_ASCII = True
+    JSON_AS_ASCII = False
     JSON_SEPARATORS = (',', ':')
     JSON_INDENT = None
     JSON_SORT_KEYS = False
